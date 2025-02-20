@@ -1,7 +1,7 @@
 # E-Commerce Microservices System
 
 ## Deskripsi Aplikasi
-Aplikasi ini adalah sebuah sistem e-commerce yang terdiri dari beberapa microservice yang dibangun menggunakan **Java 17** dan **Maven 3**. Setiap service memiliki fungsi khusus untuk mendukung operasi e-commerce, seperti manajemen pengguna, produk, pesanan, keranjang belanja, stok produk, dan pembayaran. Database yang digunakan adalah **PostgreSQL**. Aplikasi ini dirancang untuk memudahkan pengelolaan toko online, mulai dari registrasi pengguna, penambahan produk, hingga proses pembayaran.
+Aplikasi ini adalah sebuah sistem e-commerce yang terdiri dari beberapa microservice yang dibangun menggunakan **Java 17** dan **Maven 3**. Setiap service memiliki fungsi khusus untuk mendukung operasi e-commerce, seperti manajemen pengguna, produk, pesanan, keranjang belanja, stok produk, pembayaran, dan notifikasi. Database yang digunakan adalah **PostgreSQL**. Aplikasi ini dirancang untuk memudahkan pengelolaan toko online, mulai dari registrasi pengguna, penambahan produk, hingga proses pembayaran.
 
 ---
 
@@ -117,6 +117,24 @@ Aplikasi ini adalah sebuah sistem e-commerce yang terdiri dari beberapa microser
 
 #### Tabel Database:
 - **payments** (id, order_id, amount, payment_status, payment_date).
+
+---
+
+### 7. Notification Service
+#### Fitur:
+- Mengirimkan notifikasi kepada pengguna.
+- Mendukung notifikasi untuk berbagai kejadian, seperti pesanan baru, pembayaran berhasil, atau pembaruan status pesanan.
+
+#### Tech Stack:
+- **Java 17**, **Maven 3**, **PostgreSQL**.
+
+#### Endpoints:
+- `POST /notifications` - Mengirimkan notifikasi baru.
+- `GET /notifications/{userId}` - Mendapatkan daftar notifikasi untuk pengguna tertentu.
+- `PUT /notifications/{id}` - Menandai notifikasi sebagai sudah dibaca.
+
+#### Tabel Database:
+- **notifications** (id, user_id, message, status, created_at).
 
 ---
 
