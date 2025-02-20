@@ -86,24 +86,7 @@ Aplikasi ini adalah sebuah sistem e-commerce yang terdiri dari beberapa microser
 
 ---
 
-### 5. Inventory Service (Stok Produk)
-#### Fitur:
-- Mengelola stok produk.
-- Mengupdate stok setelah transaksi (pembelian atau pengembalian).
-
-#### Tech Stack:
-- **Java 17**, **Maven 3**, **PostgreSQL**.
-
-#### Endpoints:
-- `GET /inventory/{productId}` - Mendapatkan jumlah stok produk.
-- `PUT /inventory/{productId}` - Mengupdate stok produk.
-
-#### Tabel Database:
-- **inventory** (product_id, stock_quantity, last_updated).
-
----
-
-### 6. Payment Service
+### 5. Payment Service
 #### Fitur:
 - Memproses pembayaran untuk pesanan.
 - Melacak status pembayaran.
@@ -120,7 +103,7 @@ Aplikasi ini adalah sebuah sistem e-commerce yang terdiri dari beberapa microser
 
 ---
 
-### 7. Notification Service
+### 6. Notification Service
 #### Fitur:
 - Mengirimkan notifikasi kepada pengguna.
 - Mendukung notifikasi untuk berbagai kejadian, seperti pesanan baru, pembayaran berhasil, atau pembaruan status pesanan.
