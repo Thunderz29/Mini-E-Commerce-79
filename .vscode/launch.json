@@ -19,6 +19,16 @@
       "projectName": "inventory-service",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-ProductServiceApplication<product-service>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.e_commerce.product_service.ProductServiceApplication",
+      "projectName": "product-service",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }

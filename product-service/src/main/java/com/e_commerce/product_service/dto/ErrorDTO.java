@@ -1,4 +1,4 @@
-package com.e_commerce.inventory_service.dto;
+package com.e_commerce.product_service.dto;
 
 import java.time.LocalDateTime;
 
@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ErrorResponseDTO {
+public class ErrorDTO {
+    private int status;
     private String message;
-    private String details;
     private LocalDateTime timestamp;
 }
