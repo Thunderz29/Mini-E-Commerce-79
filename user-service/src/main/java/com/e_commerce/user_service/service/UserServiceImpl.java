@@ -3,27 +3,33 @@ package com.e_commerce.user_service.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
+import com.e_commerce.user_service.dto.ForgotPasswordDTO;
 import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
 import com.e_commerce.user_service.exception.DuplicateUserException;
+import com.e_commerce.user_service.exception.ResourceNotFoundException;
 import com.e_commerce.user_service.exception.UserNotFoundException;
 import com.e_commerce.user_service.model.User;
 import com.e_commerce.user_service.repository.UserRepository;
 import com.e_commerce.user_service.security.JwtTokenProvider;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // Create User
     @Override
@@ -140,6 +146,27 @@ public class UserServiceImpl implements UserService {
 
         // Return response
         return new LoginResponseDTO(token, "Login successful");
+    }
+
+    @Override
+    @Transactional
+    public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+        // 1. Validate the email
+        User user = userRepository.findByEmail(forgotPasswordDTO.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with email: " + forgotPasswordDTO.getEmail()));
+
+        // 2. Check if newPassword matches confirmPassword
+        if (!forgotPasswordDTO.getNewPassword().equals(forgotPasswordDTO.getConfirmPassword())) {
+            throw new IllegalArgumentException("Password and confirmation password do not match.");
+        }
+
+        // 3. Encode the new password
+        String encodedPassword = passwordEncoder.encode(forgotPasswordDTO.getNewPassword());
+
+        // 4. Update the user's password
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
     }
 
 }

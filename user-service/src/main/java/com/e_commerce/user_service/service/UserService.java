@@ -1,6 +1,7 @@
 package com.e_commerce.user_service.service;
 
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
+import com.e_commerce.user_service.dto.ForgotPasswordDTO;
 import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
@@ -25,5 +26,8 @@ public interface UserService {
 
     // Login
     LoginResponseDTO login(LoginRequestDTO loginRequest);
+
+    // Forgot Password
+    void forgotPassword(ForgotPasswordDTO forgotPasswordDTO);
 
 }

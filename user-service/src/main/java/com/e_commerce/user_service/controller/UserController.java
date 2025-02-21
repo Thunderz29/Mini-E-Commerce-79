@@ -16,16 +16,14 @@ import com.e_commerce.user_service.dto.UserResponseDTO;
 import com.e_commerce.user_service.service.UserService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     // Create a new user
     @PostMapping
