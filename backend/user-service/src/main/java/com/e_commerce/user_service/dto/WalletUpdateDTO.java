@@ -1,5 +1,7 @@
 package com.e_commerce.user_service.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDTO {
+public class WalletUpdateDTO {
 
-    private int statusCode;
-    private String token;
-    private String message;
+    private BigDecimal amount;
 }

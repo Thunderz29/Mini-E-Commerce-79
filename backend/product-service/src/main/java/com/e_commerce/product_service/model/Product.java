@@ -26,6 +26,9 @@ public class Product {
     @Column(name = "product_id", nullable = false, updatable = false)
     private Long productId;
 
+    @Column(name = "image_url", length = 255)
+    private String imageUrl;
+
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 

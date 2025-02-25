@@ -2,6 +2,8 @@ package com.e_commerce.product_service.dto;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,4 +15,5 @@ public class ProductRequestDTO {
     private BigDecimal price;
     private Integer quantity;
     private String category;
+    private MultipartFile file;
 }

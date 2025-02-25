@@ -1,6 +1,9 @@
 package com.e_commerce.user_service.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +14,7 @@ import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
+import com.e_commerce.user_service.dto.WalletUpdateDTO;
 import com.e_commerce.user_service.exception.DuplicateUserException;
 import com.e_commerce.user_service.exception.ResourceNotFoundException;
 import com.e_commerce.user_service.exception.UserNotFoundException;
@@ -26,14 +30,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private final UserRepository userRepository;
-
     private final JwtTokenProvider jwtTokenProvider;
-
     private final PasswordEncoder passwordEncoder;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     // Create User
     @Override
-    public void createUser(CreateUserRequestDTO createUserRequestDTO) {
+    public UserResponseDTO createUser(CreateUserRequestDTO createUserRequestDTO) {
         // Check if email already exists
         if (userRepository.existsByEmail(createUserRequestDTO.getEmail())) {
             throw new DuplicateUserException("Email already exists: " + createUserRequestDTO.getEmail());
@@ -47,14 +50,40 @@ public class UserServiceImpl implements UserService {
         // Encode the password
         String encodedPassword = passwordEncoder.encode(createUserRequestDTO.getPassword());
 
-        // Map DTO to entity and save
+        // Create new user entity
         User user = new User();
         user.setUsername(createUserRequestDTO.getUsername());
         user.setEmail(createUserRequestDTO.getEmail());
         user.setPassword(encodedPassword);
+        user.setWalletBalance(BigDecimal.ZERO); // Default wallet balance
 
-        // Save the user to the database
-        userRepository.save(user);
+        // Save user to database
+        User savedUser = userRepository.save(user);
+
+        // Convert UserResponseDTO to JSON
+        // try {
+        // UserResponseDTO userEvent = new UserResponseDTO(
+        // savedUser.getId(),
+        // savedUser.getUsername(),
+        // savedUser.getEmail(),
+        // savedUser.getCreatedAt());
+
+        // String userEventJson = objectMapper.writeValueAsString(userEvent);
+
+        // // Send Kafka Event
+        // kafkaTemplate.send(USER_CREATED_TOPIC, userEventJson);
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
+
+        // Return response DTO with status code
+        return new UserResponseDTO(
+                201, // Status Code for Created
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail(),
+                savedUser.getWalletBalance(),
+                savedUser.getCreatedAt());
     }
 
     // Get User by ID
@@ -63,11 +92,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
-        // Map User entity to UserResponseDTO
         return new UserResponseDTO(
+                200, // Status code for success
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getWalletBalance(),
                 user.getCreatedAt());
     }
 
@@ -77,27 +107,25 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
 
-        // Convert User to UserResponseDTO
         return new UserResponseDTO(
+                200, // Status code for success
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getWalletBalance(),
                 user.getCreatedAt());
     }
 
     // Update User
     @Override
     public UserResponseDTO updateUser(String id, UpdateUserRequestDTO updateUserRequestDTO) {
-        // Find user by ID
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
-        // Update fields if present in DTO
         if (updateUserRequestDTO.getUsername() != null) {
             user.setUsername(updateUserRequestDTO.getUsername());
         }
         if (updateUserRequestDTO.getEmail() != null) {
-            // Check if email is used by another user
             if (userRepository.existsByEmail(updateUserRequestDTO.getEmail()) &&
                     !user.getEmail().equals(updateUserRequestDTO.getEmail())) {
                 throw new DuplicateUserException("Email already exists: " + updateUserRequestDTO.getEmail());
@@ -105,18 +133,16 @@ public class UserServiceImpl implements UserService {
             user.setEmail(updateUserRequestDTO.getEmail());
         }
         if (updateUserRequestDTO.getPassword() != null) {
-            // Set password directly
-            user.setPassword(updateUserRequestDTO.getPassword());
+            user.setPassword(passwordEncoder.encode(updateUserRequestDTO.getPassword()));
         }
 
-        // Save updated user
         user = userRepository.save(user);
-
-        // Map user to UserResponseDTO and return
         return new UserResponseDTO(
+                200, // Status code for success
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getWalletBalance(),
                 user.getCreatedAt());
     }
 
@@ -132,41 +158,49 @@ public class UserServiceImpl implements UserService {
     // Login
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        // Check if email exists in the database
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Email not found: " + loginRequest.getEmail()));
 
-        // Validate password using PasswordEncoder
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
+            return new LoginResponseDTO(401, null, "Invalid password");
         }
 
-        // Generate JWT Token
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
-
-        // Return response
-        return new LoginResponseDTO(token, "Login successful");
+        return new LoginResponseDTO(200, token, "Login successful");
     }
 
     @Override
     @Transactional
     public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
-        // 1. Validate the email
         User user = userRepository.findByEmail(forgotPasswordDTO.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with email: " + forgotPasswordDTO.getEmail()));
 
-        // 2. Check if newPassword matches confirmPassword
         if (!forgotPasswordDTO.getNewPassword().equals(forgotPasswordDTO.getConfirmPassword())) {
             throw new IllegalArgumentException("Password and confirmation password do not match.");
         }
 
-        // 3. Encode the new password
         String encodedPassword = passwordEncoder.encode(forgotPasswordDTO.getNewPassword());
-
-        // 4. Update the user's password
         user.setPassword(encodedPassword);
         userRepository.save(user);
     }
 
+    // Update Wallet (Top-Up)
+    @Override
+    @Transactional
+    public UserResponseDTO updateWallet(String id, WalletUpdateDTO walletUpdateDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+
+        user.setWalletBalance(user.getWalletBalance().add(walletUpdateDTO.getAmount()));
+        user = userRepository.save(user);
+
+        return new UserResponseDTO(
+                200, // Status code for success
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getWalletBalance(),
+                user.getCreatedAt());
+    }
 }

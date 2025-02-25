@@ -9,12 +9,6 @@
     },
     {
       "type": "java",
-      "name": "DemoApplication",
-      "request": "launch",
-      "mainClass": "com.example.demo.DemoApplication"
-    },
-    {
-      "type": "java",
       "name": "Spring Boot-UserServiceApplication<user-service>",
       "request": "launch",
       "cwd": "${workspaceFolder}",
