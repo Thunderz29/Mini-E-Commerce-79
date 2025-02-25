@@ -1,5 +1,6 @@
 package com.e_commerce.user_service.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -32,11 +33,15 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "wallet_balance", nullable = false)
+    private BigDecimal walletBalance;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        this.walletBalance = BigDecimal.ZERO; // Default saldo awal 0.0
     }
 }

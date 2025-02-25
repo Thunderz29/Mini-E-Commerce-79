@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
+import com.e_commerce.user_service.dto.WalletUpdateDTO;
 import com.e_commerce.user_service.service.UserService;
 
 import jakarta.validation.Valid;
@@ -29,13 +30,8 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(
             @RequestBody @Valid CreateUserRequestDTO createUserRequestDTO) {
-        userService.createUser(createUserRequestDTO);
-        return ResponseEntity.ok(new UserResponseDTO(
-                null, // ID belum tersedia setelah pembuatan
-                createUserRequestDTO.getUsername(),
-                createUserRequestDTO.getEmail(),
-                null // createdAt diatur secara otomatis oleh database
-        ));
+        UserResponseDTO createdUser = userService.createUser(createUserRequestDTO);
+        return ResponseEntity.status(201).body(createdUser); // 201 Created
     }
 
     // Get a user by ID
@@ -66,5 +62,14 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.ok("User with ID " + id + " has been deleted successfully.");
+    }
+
+    // Top-up Wallet
+    @PostMapping("/{id}/wallet/topup")
+    public ResponseEntity<UserResponseDTO> topUpWallet(
+            @PathVariable String id,
+            @RequestBody @Valid WalletUpdateDTO walletUpdateDTO) {
+        UserResponseDTO updatedUser = userService.updateWallet(id, walletUpdateDTO);
+        return ResponseEntity.ok(updatedUser);
     }
 }

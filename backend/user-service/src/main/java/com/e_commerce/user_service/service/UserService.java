@@ -6,11 +6,12 @@ import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
+import com.e_commerce.user_service.dto.WalletUpdateDTO;
 
 public interface UserService {
 
     // Create User
-    void createUser(CreateUserRequestDTO createUserRequestDTO);
+    UserResponseDTO createUser(CreateUserRequestDTO createUserRequestDTO);
 
     // Get User by ID
     UserResponseDTO getUserById(String id);
@@ -30,4 +31,6 @@ public interface UserService {
     // Forgot Password
     void forgotPassword(ForgotPasswordDTO forgotPasswordDTO);
 
+    // Update Wallet (Top-Up)
+    UserResponseDTO updateWallet(String id, WalletUpdateDTO walletUpdateDTO);
 }
