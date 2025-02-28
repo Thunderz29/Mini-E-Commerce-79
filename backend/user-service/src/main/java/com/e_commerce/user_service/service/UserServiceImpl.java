@@ -3,16 +3,17 @@ package com.e_commerce.user_service.service;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.e_commerce.user_service.config.KafkaProducerService;
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
 import com.e_commerce.user_service.dto.ForgotPasswordDTO;
 import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
+import com.e_commerce.user_service.dto.UserEventDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
 import com.e_commerce.user_service.dto.WalletUpdateDTO;
 import com.e_commerce.user_service.exception.DuplicateUserException;
@@ -32,7 +33,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaProducerService kafkaProducerService;
+    private static final String USER_CREATED_TOPIC = "user-created";
+    private static final String WALLET_UPDATED_TOPIC = "wallet-updated";
+    private static final String USER_LOGIN_TOPIC = "user-login";
 
     // Create User
     @Override
@@ -60,21 +64,10 @@ public class UserServiceImpl implements UserService {
         // Save user to database
         User savedUser = userRepository.save(user);
 
-        // Convert UserResponseDTO to JSON
-        // try {
-        // UserResponseDTO userEvent = new UserResponseDTO(
-        // savedUser.getId(),
-        // savedUser.getUsername(),
-        // savedUser.getEmail(),
-        // savedUser.getCreatedAt());
-
-        // String userEventJson = objectMapper.writeValueAsString(userEvent);
-
-        // // Send Kafka Event
-        // kafkaTemplate.send(USER_CREATED_TOPIC, userEventJson);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
+        // Kirim event ke Kafka
+        UserEventDTO event = new UserEventDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(),
+                "USER_CREATED");
+        kafkaProducerService.sendMessage(USER_CREATED_TOPIC, event.toString());
 
         // Return response DTO with status code
         return new UserResponseDTO(
@@ -138,7 +131,7 @@ public class UserServiceImpl implements UserService {
 
         user = userRepository.save(user);
         return new UserResponseDTO(
-                200, // Status code for success
+                200,
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -166,6 +159,12 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
+
+        // Kirim event login ke Kafka
+        UserEventDTO event = new UserEventDTO(user.getId(), user.getUsername(), user.getEmail(),
+                "USER_LOGIN");
+        kafkaProducerService.sendMessage(USER_LOGIN_TOPIC, event.toString());
+
         return new LoginResponseDTO(200, token, "Login successful");
     }
 
@@ -195,8 +194,13 @@ public class UserServiceImpl implements UserService {
         user.setWalletBalance(user.getWalletBalance().add(walletUpdateDTO.getAmount()));
         user = userRepository.save(user);
 
+        // Kirim event ke Kafka
+        UserEventDTO event = new UserEventDTO(user.getId(), user.getUsername(), user.getEmail(),
+                "WALLET_UPDATED");
+
+        kafkaProducerService.sendMessage(WALLET_UPDATED_TOPIC, event.toString());
         return new UserResponseDTO(
-                200, // Status code for success
+                200,
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),

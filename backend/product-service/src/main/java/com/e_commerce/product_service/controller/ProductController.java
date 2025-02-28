@@ -86,4 +86,14 @@ public class ProductController {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/check-stock")
+    public ResponseEntity<String> checkStock(
+            @RequestParam String orderId,
+            @RequestParam Long productId,
+            @RequestParam int quantity) {
+
+        productService.checkAndUpdateStock(orderId, productId, quantity);
+        return ResponseEntity.ok("Stock check request received.");
+    }
 }

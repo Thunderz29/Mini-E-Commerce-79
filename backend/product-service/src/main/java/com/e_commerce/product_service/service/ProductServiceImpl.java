@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.e_commerce.product_service.config.KafkaProducerService;
 import com.e_commerce.product_service.dto.ProductRequestDTO;
 import com.e_commerce.product_service.dto.ProductResponseDTO;
+import com.e_commerce.product_service.dto.StockUpdateDTO;
 import com.e_commerce.product_service.exception.ResourceNotFoundException;
 import com.e_commerce.product_service.model.Product;
 import com.e_commerce.product_service.repository.ProductRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final MinioService minioService;
+    private final KafkaProducerService kafkaProducerService;
 
     @Override
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
@@ -116,6 +120,23 @@ public class ProductServiceImpl implements ProductService {
         responseDTO.setImageUrl(product.getImageUrl());
 
         return responseDTO;
+    }
+
+    @Transactional
+    public void checkAndUpdateStock(String orderId, Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+
+        boolean stockAvailable = product.getQuantity() >= quantity;
+
+        if (stockAvailable) {
+            product.setQuantity(product.getQuantity() - quantity);
+            productRepository.save(product);
+        }
+
+        StockUpdateDTO stockUpdateDTO = new StockUpdateDTO(orderId, stockAvailable);
+        kafkaProducerService.sendStockUpdate(stockUpdateDTO);
+        log.info("✅ Stock update sent for order {}: {}", orderId, stockAvailable);
     }
 
 }
