@@ -21,10 +21,12 @@ import com.e_commerce.product_service.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
 
     private final ProductService productService;
@@ -36,12 +38,16 @@ public class ProductController {
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
         try {
+            log.info("Received request to create product: {}", productJson);
+
             ObjectMapper mapper = new ObjectMapper();
             ProductRequestDTO productRequest = mapper.readValue(productJson, ProductRequestDTO.class);
             productRequest.setFile(file);
+
             ProductResponseDTO createdProduct = productService.createProduct(productRequest);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
+            log.error("Error creating product: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -85,5 +91,15 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/check-stock")
+    public ResponseEntity<String> checkStock(
+            @RequestParam String orderId,
+            @RequestParam Long productId,
+            @RequestParam int quantity) {
+
+        productService.checkAndUpdateStock(orderId, productId, quantity);
+        return ResponseEntity.ok("Stock check request received.");
     }
 }

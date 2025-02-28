@@ -18,6 +18,7 @@ import com.e_commerce.order_service.dto.OrderRequestDTO;
 import com.e_commerce.order_service.dto.OrderResponseDTO;
 import com.e_commerce.order_service.service.OrderService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody @Valid OrderRequestDTO orderRequestDTO) {
         return ResponseEntity.ok(orderService.createOrder(orderRequestDTO));
     }
 

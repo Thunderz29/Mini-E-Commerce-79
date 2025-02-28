@@ -15,4 +15,6 @@ public interface ProductService {
     ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequestDTO);
 
     void deleteProduct(Long id);
+
+    void checkAndUpdateStock(String orderId, Long productId, int quantity);
 }

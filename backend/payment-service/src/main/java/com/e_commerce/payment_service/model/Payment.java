@@ -21,7 +21,7 @@ public class Payment {
     private Long id;
 
     @Column(name = "order_id", nullable = false)
-    private Integer orderId;
+    private String orderId;
 
     @Column(nullable = false)
     private BigDecimal amount;

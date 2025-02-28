@@ -1,14 +1,21 @@
 package com.e_commerce.user_service.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
@@ -38,6 +45,9 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
         UserResponseDTO user = userService.getUserById(id);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
         return ResponseEntity.ok(user);
     }
 
@@ -71,5 +81,16 @@ public class UserController {
             @RequestBody @Valid WalletUpdateDTO walletUpdateDTO) {
         UserResponseDTO updatedUser = userService.updateWallet(id, walletUpdateDTO);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    // Menangani semua ResponseStatusException agar format JSON tetap konsisten
+    @ExceptionHandler(ResponseStatusException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", ex.getStatusCode().value());
+        errorResponse.put("error", ex.getReason());
+        errorResponse.put("message", ex.getReason());
+        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
     }
 }

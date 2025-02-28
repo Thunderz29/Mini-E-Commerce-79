@@ -1,10 +1,12 @@
 package com.e_commerce.cart_service.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateCartItemDTO {
     private String productId;
     private int quantity;
