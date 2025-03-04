@@ -17,4 +17,5 @@ public class KafkaProducerService {
         log.info("📤 Sending message to topic {}: {}", topic, payload);
         kafkaTemplate.send(topic, payload);
     }
+
 }

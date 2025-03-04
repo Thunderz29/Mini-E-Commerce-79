@@ -3,6 +3,7 @@ package com.e_commerce.user_service.service;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
 import com.e_commerce.user_service.dto.UserEventDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
+import com.e_commerce.user_service.dto.WalletEventDTO;
 import com.e_commerce.user_service.dto.WalletUpdateDTO;
 import com.e_commerce.user_service.exception.DuplicateUserException;
 import com.e_commerce.user_service.exception.ResourceNotFoundException;
@@ -111,25 +113,32 @@ public class UserServiceImpl implements UserService {
 
     // Update User
     @Override
+    @Transactional
     public UserResponseDTO updateUser(String id, UpdateUserRequestDTO updateUserRequestDTO) {
+
+        // Ambil user ID dari token
+        String tokenUserId = jwtTokenProvider.getClaims(
+                SecurityContextHolder.getContext().getAuthentication().getCredentials().toString()).getSubject();
+
+        // Validasi apakah user yang sedang login sesuai dengan ID yang ingin di-update
+        if (!tokenUserId.equals(id)) {
+            throw new SecurityException("Unauthorized to update this user");
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+
+        // Update hanya email dan username
+        if (updateUserRequestDTO.getEmail() != null) {
+            user.setEmail(updateUserRequestDTO.getEmail());
+        }
 
         if (updateUserRequestDTO.getUsername() != null) {
             user.setUsername(updateUserRequestDTO.getUsername());
         }
-        if (updateUserRequestDTO.getEmail() != null) {
-            if (userRepository.existsByEmail(updateUserRequestDTO.getEmail()) &&
-                    !user.getEmail().equals(updateUserRequestDTO.getEmail())) {
-                throw new DuplicateUserException("Email already exists: " + updateUserRequestDTO.getEmail());
-            }
-            user.setEmail(updateUserRequestDTO.getEmail());
-        }
-        if (updateUserRequestDTO.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(updateUserRequestDTO.getPassword()));
-        }
 
-        user = userRepository.save(user);
+        userRepository.save(user);
+
         return new UserResponseDTO(
                 200,
                 user.getId(),
@@ -188,6 +197,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponseDTO updateWallet(String id, WalletUpdateDTO walletUpdateDTO) {
+        String tokenUserId = jwtTokenProvider.getClaims(
+                SecurityContextHolder.getContext().getAuthentication().getCredentials().toString()).getSubject();
+
+        if (!tokenUserId.equals(id)) {
+            throw new SecurityException("Unauthorized to update wallet");
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
@@ -195,10 +211,14 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
 
         // Kirim event ke Kafka
-        UserEventDTO event = new UserEventDTO(user.getId(), user.getUsername(), user.getEmail(),
+        WalletEventDTO walletEvent = new WalletEventDTO(
+                user.getId(),
+                user.getUsername(),
+                walletUpdateDTO.getAmount(),
+                user.getWalletBalance(),
                 "WALLET_UPDATED");
+        kafkaProducerService.sendMessage(WALLET_UPDATED_TOPIC, walletEvent.toString());
 
-        kafkaProducerService.sendMessage(WALLET_UPDATED_TOPIC, event.toString());
         return new UserResponseDTO(
                 200,
                 user.getId(),
@@ -207,4 +227,5 @@ public class UserServiceImpl implements UserService {
                 user.getWalletBalance(),
                 user.getCreatedAt());
     }
+
 }

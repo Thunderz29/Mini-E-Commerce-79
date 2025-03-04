@@ -1,6 +1,6 @@
 package com.e_commerce.product_service.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.e_commerce.product_service.dto.ProductRequestDTO;
 import com.e_commerce.product_service.dto.ProductResponseDTO;
@@ -10,7 +10,7 @@ public interface ProductService {
 
     ProductResponseDTO getProductById(Long id);
 
-    List<ProductResponseDTO> getAllProducts(String sortBy, String direction);
+    Page<ProductResponseDTO> getAllProducts(String sortBy, String direction, int page, int size);
 
     ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequestDTO);
 

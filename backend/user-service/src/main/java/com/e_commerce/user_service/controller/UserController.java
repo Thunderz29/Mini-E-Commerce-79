@@ -38,7 +38,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> createUser(
             @RequestBody @Valid CreateUserRequestDTO createUserRequestDTO) {
         UserResponseDTO createdUser = userService.createUser(createUserRequestDTO);
-        return ResponseEntity.status(201).body(createdUser); // 201 Created
+        return ResponseEntity.status(201).body(createdUser);
     }
 
     // Get a user by ID

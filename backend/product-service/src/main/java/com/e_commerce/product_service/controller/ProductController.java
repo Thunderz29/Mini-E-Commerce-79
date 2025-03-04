@@ -1,7 +1,6 @@
 package com.e_commerce.product_service.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -61,9 +60,13 @@ public class ProductController {
 
     // GET /products - Menampilkan daftar produk
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(@RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
-        List<ProductResponseDTO> products = productService.getAllProducts(sortBy, direction);
+    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<ProductResponseDTO> products = productService.getAllProducts(sortBy, direction, page, size);
         return ResponseEntity.ok(products);
     }
 

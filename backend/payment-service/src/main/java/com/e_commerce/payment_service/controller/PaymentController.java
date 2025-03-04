@@ -16,16 +16,14 @@ import com.e_commerce.payment_service.dto.PaymentResponseDTO;
 import com.e_commerce.payment_service.service.PaymentService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/payment")
+@RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentService paymentService;
-
-    public PaymentController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
 
     @PostMapping
     public ResponseEntity<PaymentResponseDTO> processPayment(@RequestBody @Valid PaymentRequestDTO requestDTO) {

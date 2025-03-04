@@ -1,8 +1,8 @@
 package com.e_commerce.product_service.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -63,10 +63,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDTO> getAllProducts(String sortBy, String direction) {
+    public Page<ProductResponseDTO> getAllProducts(String sortBy, String direction, int page, int size) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        List<Product> products = productRepository.findAll(sort);
-        return products.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Ambil data dalam bentuk Page<Product>
+        Page<Product> productsPage = productRepository.findAll(pageable);
+
+        // Gunakan .map() bawaan dari Page untuk konversi Product -> ProductResponseDTO
+        return productsPage.map(this::mapToResponseDTO);
     }
 
     @Override

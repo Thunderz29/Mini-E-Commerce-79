@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.e_commerce.order_service.config.KafkaProducerService;
 import com.e_commerce.order_service.dto.OrderRequestDTO;
@@ -33,18 +35,16 @@ public class OrderServiceImpl implements OrderService {
                         throw new InvalidOrderException("Quantity must be greater than zero.");
                 }
 
-                // // Kirim request ke Product Service untuk cek stok
-                // String productServiceUrl =
-                // "http://localhost:8080/product-service/products/check-stock";
-                // RestTemplate restTemplate = new RestTemplate();
+                // Kirim request ke Product Service untuk cek stok
+                String productServiceUrl = "http://localhost:8080/product-service/products/check-stock";
+                RestTemplate restTemplate = new RestTemplate();
 
-                // UriComponentsBuilder builder =
-                // UriComponentsBuilder.fromHttpUrl(productServiceUrl)
-                // .queryParam("orderId", UUID.randomUUID().toString())
-                // .queryParam("productId", orderRequestDTO.getProductId())
-                // .queryParam("quantity", orderRequestDTO.getQuantity());
+                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(productServiceUrl)
+                                .queryParam("orderId", UUID.randomUUID().toString())
+                                .queryParam("productId", orderRequestDTO.getProductId())
+                                .queryParam("quantity", orderRequestDTO.getQuantity());
 
-                // restTemplate.postForEntity(builder.toUriString(), null, String.class);
+                restTemplate.postForEntity(builder.toUriString(), null, String.class);
 
                 // Membuat objek Order dari DTO request
                 Order order = Order.builder()
@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
                 Order savedOrder = orderRepository.save(order);
 
                 // 🔥 Kirim event order_created ke Kafka
-                // kafkaProducerService.sendMessage("order_created", savedOrder);
+                kafkaProducerService.sendMessage("order_created", savedOrder);
 
                 // Mengembalikan response dalam bentuk DTO
                 return mapToDTO(savedOrder);
