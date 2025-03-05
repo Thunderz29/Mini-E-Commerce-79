@@ -1,0 +1,55 @@
+/* Wrapper agar konten berada di tengah */
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Penuh 1 layar */
+    background-color: #f4f4f4; /* Warna latar belakang */
+  }
+  
+  /* Logo dan judul e-commerce */
+  .logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .logo-container img {
+    width: 100px; /* Sesuaikan ukuran logo */
+    height: auto;
+  }
+  
+  .logo-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Container Login */
+  .login-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 350px;
+  }
+  
+  .login-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Form input */
+  .input-field {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Tombol Login */
+  .login-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+  }
+  

@@ -14,20 +14,28 @@ import com.e_commerce.user_service.dto.ForgotPasswordDTO;
 import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
-import com.e_commerce.user_service.dto.UserEventDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
-import com.e_commerce.user_service.dto.WalletEventDTO;
 import com.e_commerce.user_service.dto.WalletUpdateDTO;
+import com.e_commerce.user_service.dto.event.ForgotPasswordEventDTO;
+import com.e_commerce.user_service.dto.event.UserEventDTO;
+import com.e_commerce.user_service.dto.event.UserLoginEventDTO;
+import com.e_commerce.user_service.dto.event.UserRetrievedEventDTO;
+import com.e_commerce.user_service.dto.event.UserUpdatedEventDTO;
+import com.e_commerce.user_service.dto.event.WalletEventDTO;
 import com.e_commerce.user_service.exception.DuplicateUserException;
 import com.e_commerce.user_service.exception.ResourceNotFoundException;
 import com.e_commerce.user_service.exception.UserNotFoundException;
 import com.e_commerce.user_service.model.User;
 import com.e_commerce.user_service.repository.UserRepository;
 import com.e_commerce.user_service.security.JwtTokenProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -39,6 +47,9 @@ public class UserServiceImpl implements UserService {
     private static final String USER_CREATED_TOPIC = "user-created";
     private static final String WALLET_UPDATED_TOPIC = "wallet-updated";
     private static final String USER_LOGIN_TOPIC = "user-login";
+    private static final String USER_UPDATE_TOPIC = "user-updated";
+    private static final String USER_RETREIVE_TOPIC = "user-retrieved";
+    private static final String USER_FORGOT_PASSWORD_TOPIC = "forgot-password";
 
     // Create User
     @Override
@@ -61,13 +72,17 @@ public class UserServiceImpl implements UserService {
         user.setUsername(createUserRequestDTO.getUsername());
         user.setEmail(createUserRequestDTO.getEmail());
         user.setPassword(encodedPassword);
-        user.setWalletBalance(BigDecimal.ZERO); // Default wallet balance
+        user.setWalletBalance(BigDecimal.ZERO);
+        user.setPhone(createUserRequestDTO.getPhone());
 
         // Save user to database
         User savedUser = userRepository.save(user);
 
         // Kirim event ke Kafka
-        UserEventDTO event = new UserEventDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(),
+        UserEventDTO event = new UserEventDTO(savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail(),
+                savedUser.getPhone(),
                 "USER_CREATED");
         kafkaProducerService.sendMessage(USER_CREATED_TOPIC, event.toString());
 
@@ -77,6 +92,7 @@ public class UserServiceImpl implements UserService {
                 savedUser.getId(),
                 savedUser.getUsername(),
                 savedUser.getEmail(),
+                savedUser.getPhone(),
                 savedUser.getWalletBalance(),
                 savedUser.getCreatedAt());
     }
@@ -87,11 +103,19 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
+        // Kirim event ke Kafka
+        UserRetrievedEventDTO event = new UserRetrievedEventDTO(user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPhone(), "USER_RETRIEVED");
+        kafkaProducerService.sendMessage(USER_RETREIVE_TOPIC, event.toString());
+
         return new UserResponseDTO(
                 200, // Status code for success
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getWalletBalance(),
                 user.getCreatedAt());
     }
@@ -102,11 +126,19 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
 
+        // Kirim event ke Kafka
+        UserRetrievedEventDTO event = new UserRetrievedEventDTO(user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPhone(), "USER_RETRIEVED");
+        kafkaProducerService.sendMessage(USER_RETREIVE_TOPIC, event.toString());
+
         return new UserResponseDTO(
                 200, // Status code for success
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getWalletBalance(),
                 user.getCreatedAt());
     }
@@ -137,13 +169,23 @@ public class UserServiceImpl implements UserService {
             user.setUsername(updateUserRequestDTO.getUsername());
         }
 
+        if (updateUserRequestDTO.getPhone() != null) {
+            user.setUsername(updateUserRequestDTO.getUsername());
+        }
+
         userRepository.save(user);
+
+        // Kirim event ke Kafka
+        UserUpdatedEventDTO event = new UserUpdatedEventDTO(user.getId(), user.getUsername(), user.getEmail(),
+                user.getPhone(), "USER_UPDATED");
+        kafkaProducerService.sendMessage(USER_UPDATE_TOPIC, event);
 
         return new UserResponseDTO(
                 200,
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getWalletBalance(),
                 user.getCreatedAt());
     }
@@ -159,6 +201,7 @@ public class UserServiceImpl implements UserService {
 
     // Login
     @Override
+
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Email not found: " + loginRequest.getEmail()));
@@ -170,9 +213,14 @@ public class UserServiceImpl implements UserService {
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
 
         // Kirim event login ke Kafka
-        UserEventDTO event = new UserEventDTO(user.getId(), user.getUsername(), user.getEmail(),
+        UserLoginEventDTO event = new UserLoginEventDTO(user.getId(), user.getUsername(), user.getEmail(), token,
                 "USER_LOGIN");
-        kafkaProducerService.sendMessage(USER_LOGIN_TOPIC, event.toString());
+        try {
+            String jsonEvent = new ObjectMapper().writeValueAsString(event);
+            kafkaProducerService.sendMessage(USER_LOGIN_TOPIC, jsonEvent);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize UserLoginEventDTO", e);
+        }
 
         return new LoginResponseDTO(200, token, "Login successful");
     }
@@ -191,6 +239,10 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(forgotPasswordDTO.getNewPassword());
         user.setPassword(encodedPassword);
         userRepository.save(user);
+
+        // Kirim event ke Kafka
+        ForgotPasswordEventDTO event = new ForgotPasswordEventDTO(user.getEmail(), "FORGOT_PASSWORD");
+        kafkaProducerService.sendMessage(USER_FORGOT_PASSWORD_TOPIC, event.toString());
     }
 
     // Update Wallet (Top-Up)
@@ -224,6 +276,7 @@ public class UserServiceImpl implements UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getWalletBalance(),
                 user.getCreatedAt());
     }

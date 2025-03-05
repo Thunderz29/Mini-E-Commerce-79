@@ -1,4 +1,4 @@
-package com.e_commerce.user_service.dto;
+package com.e_commerce.user_service.dto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEventDTO {
-    private String userId;
-    private String username;
+public class ForgotPasswordEventDTO {
     private String email;
-    private String eventType;
+    private String eventType = "FORGOT_PASSWORD";
 }

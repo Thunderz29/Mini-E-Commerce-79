@@ -2,12 +2,10 @@ package com.e_commerce.user_service.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import org.hibernate.annotations.GenericGenerator;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -19,8 +17,6 @@ import lombok.Data;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
 
@@ -36,12 +32,19 @@ public class User {
     @Column(name = "wallet_balance", nullable = false)
     private BigDecimal walletBalance;
 
+    @Column(name = "phone", nullable = true)
+    private String phone;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
-    protected void onCreate() {
+    public void onCreate() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+            // Menghasilkan 8 karakter dari UUID
+        }
         this.createdAt = LocalDateTime.now();
-        this.walletBalance = BigDecimal.ZERO; // Default saldo awal 0.0
+        this.walletBalance = BigDecimal.ZERO;
     }
 }

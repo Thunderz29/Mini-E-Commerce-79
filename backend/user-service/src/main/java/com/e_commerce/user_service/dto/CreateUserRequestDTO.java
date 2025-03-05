@@ -2,6 +2,7 @@ package com.e_commerce.user_service.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -19,4 +20,9 @@ public class CreateUserRequestDTO {
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
+
+    @NotBlank(message = "Phone number is required") // Tidak boleh kosong atau null
+    @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
+    @Pattern(regexp = "^[0-9]+$", message = "Phone number must contain only digits") // Hanya angka
+    private String phone;
 }

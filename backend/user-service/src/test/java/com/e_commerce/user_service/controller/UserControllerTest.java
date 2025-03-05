@@ -52,7 +52,7 @@ class UserControllerTest {
                 requestDTO.setEmail("john@example.com");
                 requestDTO.setPassword("password123");
 
-                UserResponseDTO responseDTO = new UserResponseDTO(201, "1", "John Doe", "john@example.com",
+                UserResponseDTO responseDTO = new UserResponseDTO(201, "1", "John Doe", "john@example.com", "081283664",
                                 BigDecimal.valueOf(100.0), LocalDateTime.now());
 
                 when(userService.createUser(any(CreateUserRequestDTO.class))).thenReturn(responseDTO);
@@ -86,7 +86,7 @@ class UserControllerTest {
         @Test
         @DisplayName("✅ Should get user by ID")
         void testGetUserById() throws Exception {
-                UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Doe", "john@example.com",
+                UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Doe", "john@example.com", "081283664",
                                 BigDecimal.valueOf(200.0), LocalDateTime.now());
 
                 when(userService.getUserById("1")).thenReturn(responseDTO);
@@ -117,7 +117,7 @@ class UserControllerTest {
         @Test
         @DisplayName("✅ Should get user by Email")
         void testGetUserByEmail() throws Exception {
-                UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Doe", "john@example.com",
+                UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Doe", "john@example.com", "081283664",
                                 BigDecimal.valueOf(200.0), LocalDateTime.now());
 
                 when(userService.getUserByEmail("john@example.com")).thenReturn(responseDTO);
@@ -136,9 +136,10 @@ class UserControllerTest {
         @DisplayName("✅ Should update user successfully")
         void testUpdateUser() throws Exception {
                 UpdateUserRequestDTO requestDTO = new UpdateUserRequestDTO(200, "John Updated",
-                                "john.updated@example.com");
+                                "john.updated@example.com", "081283664");
 
                 UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Updated", "john.updated@example.com",
+                                "081283664",
                                 BigDecimal.valueOf(300.0), LocalDateTime.now());
 
                 when(userService.updateUser(eq("1"), any(UpdateUserRequestDTO.class))).thenReturn(responseDTO);
@@ -171,7 +172,7 @@ class UserControllerTest {
         void testTopUpWallet() throws Exception {
                 WalletUpdateDTO walletUpdateDTO = new WalletUpdateDTO(BigDecimal.valueOf(150.0));
 
-                UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Doe", "john@example.com",
+                UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Doe", "john@example.com", "081283664",
                                 BigDecimal.valueOf(450.0), LocalDateTime.now());
 
                 when(userService.updateWallet(eq("1"), any(WalletUpdateDTO.class))).thenReturn(responseDTO);

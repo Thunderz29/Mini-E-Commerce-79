@@ -16,6 +16,7 @@ public class UserResponseDTO {
     private String id;
     private String username;
     private String email;
+    private String phone;
     private BigDecimal walletBalance;
     private LocalDateTime createdAt;
 }

@@ -11,4 +11,6 @@ public class UpdateUserRequestDTO {
     private int statusCode;
     private String username;
     private String email;
+    private String phone;
+
 }

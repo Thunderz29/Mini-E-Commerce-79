@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .anyRequest().permitAll() // Login & register bisa diakses tanpa token
+                .anyRequest().permitAll()
                 .and()
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.e_commerce.product_service.config.KafkaProducerService;
@@ -11,6 +12,7 @@ import com.e_commerce.product_service.dto.ProductRequestDTO;
 import com.e_commerce.product_service.dto.ProductResponseDTO;
 import com.e_commerce.product_service.dto.StockUpdateDTO;
 import com.e_commerce.product_service.exception.ResourceNotFoundException;
+import com.e_commerce.product_service.listener.KafkaUserListener;
 import com.e_commerce.product_service.model.Product;
 import com.e_commerce.product_service.repository.ProductRepository;
 
@@ -26,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final MinioService minioService;
     private final KafkaProducerService kafkaProducerService;
+    private final KafkaUserListener kafkaUserListener;
 
     @Override
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
@@ -63,14 +66,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public Page<ProductResponseDTO> getAllProducts(String sortBy, String direction, int page, int size) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String token = kafkaUserListener.getUserToken(userId);
+
+        if (token == null) {
+            throw new SecurityException("Unauthorized access. Please login first.");
+        }
+
+        System.out.println("User ID from Kafka Token: " + userId);
+
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Ambil data dalam bentuk Page<Product>
         Page<Product> productsPage = productRepository.findAll(pageable);
-
-        // Gunakan .map() bawaan dari Page untuk konversi Product -> ProductResponseDTO
         return productsPage.map(this::mapToResponseDTO);
     }
 

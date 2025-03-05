@@ -24,4 +24,19 @@ public class KafkaConsumerService {
     public void listenUserLogin(ConsumerRecord<String, String> record) {
         log.info("Received Login Event: {}", record.value());
     }
+
+    @KafkaListener(topics = "user-updated", groupId = "user-service-group")
+    public void listenUserUpdated(ConsumerRecord<String, String> record) {
+        log.info("Received User Updated Event: {}", record.value());
+    }
+
+    @KafkaListener(topics = "user-retrieved", groupId = "user-service-group")
+    public void listenUserRetrieved(ConsumerRecord<String, String> record) {
+        log.info("Received User Retrieved Event: {}", record.value());
+    }
+
+    @KafkaListener(topics = "forgot-password", groupId = "user-service-group")
+    public void listenForgotPassword(ConsumerRecord<String, String> record) {
+        log.info("Received Forgot Password Event: {}", record.value());
+    }
 }
