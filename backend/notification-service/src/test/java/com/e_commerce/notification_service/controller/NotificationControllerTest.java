@@ -44,16 +44,15 @@ class NotificationControllerTest {
 
         @Test
         void testCreateNotification() throws Exception {
-                UUID userId = UUID.randomUUID();
                 NotificationRequestDTO requestDTO = NotificationRequestDTO.builder()
-                                .userId(userId)
+                                .userId("1234as12")
                                 .eventType("ORDER_PLACED")
                                 .message("Your order has been placed successfully.")
                                 .build();
 
                 NotificationResponseDTO responseDTO = NotificationResponseDTO.builder()
                                 .id(UUID.randomUUID())
-                                .userId(userId)
+                                .userId("1234as12")
                                 .eventType("ORDER_PLACED")
                                 .message("Your order has been placed successfully.")
                                 .status("SENT")
@@ -66,7 +65,7 @@ class NotificationControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(requestDTO)))
                                 .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                                .andExpect(jsonPath("$.userId").value("1234as12"))
                                 .andExpect(jsonPath("$.eventType").value("ORDER_PLACED"))
                                 .andExpect(jsonPath("$.message").value("Your order has been placed successfully."))
                                 .andExpect(jsonPath("$.status").value("SENT"));
@@ -76,10 +75,9 @@ class NotificationControllerTest {
 
         @Test
         void testGetNotificationsByUserId() throws Exception {
-                UUID userId = UUID.randomUUID();
                 NotificationResponseDTO notification1 = NotificationResponseDTO.builder()
                                 .id(UUID.randomUUID())
-                                .userId(userId)
+                                .userId("1234as12")
                                 .eventType("ORDER_PLACED")
                                 .message("Your order has been placed successfully.")
                                 .status("SENT")
@@ -88,17 +86,17 @@ class NotificationControllerTest {
 
                 NotificationResponseDTO notification2 = NotificationResponseDTO.builder()
                                 .id(UUID.randomUUID())
-                                .userId(userId)
+                                .userId("1234as12")
                                 .eventType("ORDER_SHIPPED")
                                 .message("Your order has been shipped.")
                                 .status("SENT")
                                 .createdAt(LocalDateTime.now())
                                 .build();
 
-                when(notificationService.getNotificationsByUserId(userId))
+                when(notificationService.getNotificationsByUserId("1234as12"))
                                 .thenReturn(List.of(notification1, notification2));
 
-                mockMvc.perform(get("/notifications/user/{userId}", userId))
+                mockMvc.perform(get("/notifications/user/{userId}", "1234as12"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.size()").value(2))
                                 .andExpect(jsonPath("$[0].eventType").value("ORDER_PLACED"))
@@ -108,6 +106,6 @@ class NotificationControllerTest {
                                 .andExpect(jsonPath("$[1].message").value("Your order has been shipped."))
                                 .andExpect(jsonPath("$[1].status").value("SENT"));
 
-                verify(notificationService).getNotificationsByUserId(userId);
+                verify(notificationService).getNotificationsByUserId("1234as12");
         }
 }

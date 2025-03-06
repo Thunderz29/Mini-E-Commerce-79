@@ -34,25 +34,23 @@ class NotificationServiceImplTest {
     @InjectMocks
     private NotificationServiceImpl notificationService;
 
-    private UUID userId;
     private Notification notification;
     private NotificationRequestDTO requestDTO;
     private NotificationResponseDTO responseDTO;
 
     @BeforeEach
     void setUp() {
-        userId = UUID.randomUUID();
-        requestDTO = new NotificationRequestDTO(userId, "ORDER_PLACED", "Your order has been placed.");
+        requestDTO = new NotificationRequestDTO("1234as12", "ORDER_PLACED", "Your order has been placed.");
         notification = Notification.builder()
                 .id(UUID.randomUUID())
-                .userId(userId)
+                .userId("1234as12")
                 .eventType("ORDER_PLACED")
                 .message("Your order has been placed.")
                 .status("PENDING")
                 .build();
         responseDTO = NotificationResponseDTO.builder()
                 .id(UUID.randomUUID())
-                .userId(userId)
+                .userId("1234as12")
                 .eventType("ORDER_PLACED")
                 .message("Your order has been placed.")
                 .status("PENDING")
@@ -67,27 +65,28 @@ class NotificationServiceImplTest {
         NotificationResponseDTO result = notificationService.createNotification(requestDTO);
 
         assertNotNull(result);
-        assertEquals(userId, result.getUserId());
+        assertEquals("1234as12", result.getUserId());
         assertEquals("ORDER_PLACED", result.getEventType());
         verify(notificationRepository, times(1)).save(any(Notification.class));
     }
 
     @Test
     void testGetNotificationsByUserId_Success() {
-        when(notificationRepository.findByUserId(userId)).thenReturn(Collections.singletonList(notification));
+        when(notificationRepository.findByUserId("1234as12")).thenReturn(Collections.singletonList(notification));
         when(modelMapper.map(any(Notification.class), eq(NotificationResponseDTO.class))).thenReturn(responseDTO);
 
-        List<NotificationResponseDTO> result = notificationService.getNotificationsByUserId(userId);
+        List<NotificationResponseDTO> result = notificationService.getNotificationsByUserId("1234as12");
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertEquals(userId, result.get(0).getUserId());
+        assertEquals("1234as12", result.get(0).getUserId());
     }
 
     @Test
     void testGetNotificationsByUserId_NotFound() {
-        when(notificationRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+        when(notificationRepository.findByUserId("1234as12")).thenReturn(Collections.emptyList());
 
-        assertThrows(NotificationNotFoundException.class, () -> notificationService.getNotificationsByUserId(userId));
+        assertThrows(NotificationNotFoundException.class,
+                () -> notificationService.getNotificationsByUserId("1234as12"));
     }
 }

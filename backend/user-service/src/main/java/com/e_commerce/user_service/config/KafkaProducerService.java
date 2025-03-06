@@ -19,6 +19,8 @@ public class KafkaProducerService {
     public void sendMessage(String topic, Object event) {
         try {
             String message = objectMapper.writeValueAsString(event);
+            log.info("Generated JSON: {}", message);
+
             kafkaTemplate.send(topic, message);
             log.info("Sent Kafka Event: {}", message);
         } catch (Exception e) {

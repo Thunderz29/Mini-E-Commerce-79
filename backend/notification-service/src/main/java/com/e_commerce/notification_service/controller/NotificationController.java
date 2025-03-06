@@ -1,7 +1,6 @@
 package com.e_commerce.notification_service.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +32,7 @@ public class NotificationController {
 
     // Endpoint untuk mendapatkan notifikasi berdasarkan userId
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<NotificationResponseDTO>> getNotificationsByUserId(@PathVariable UUID userId) {
+    public ResponseEntity<List<NotificationResponseDTO>> getNotificationsByUserId(@PathVariable String userId) {
         List<NotificationResponseDTO> notifications = notificationService.getNotificationsByUserId(userId);
         return ResponseEntity.ok(notifications);
     }

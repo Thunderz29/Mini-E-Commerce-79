@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.e_commerce.product_service.config.KafkaProducerService;
@@ -68,14 +67,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Page<ProductResponseDTO> getAllProducts(String sortBy, String direction, int page, int size) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String token = kafkaUserListener.getUserToken(userId);
+        // String userId =
+        // SecurityContextHolder.getContext().getAuthentication().getName();
+        // String token = kafkaUserListener.getUserToken(userId);
 
-        if (token == null) {
-            throw new SecurityException("Unauthorized access. Please login first.");
-        }
+        // if (token == null) {
+        // throw new SecurityException("Unauthorized access. Please login first.");
+        // }
 
-        System.out.println("User ID from Kafka Token: " + userId);
+        // System.out.println("User ID from Kafka Token: " + userId);
 
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);

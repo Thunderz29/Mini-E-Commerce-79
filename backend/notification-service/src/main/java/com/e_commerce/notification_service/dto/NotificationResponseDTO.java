@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NotificationResponseDTO {
     private UUID id;
-    private UUID userId;
+    private String userId;
     private String eventType;
     private String message;
     private String status;

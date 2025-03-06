@@ -1,7 +1,7 @@
 package com.e_commerce.notification_service.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -15,29 +15,33 @@ import com.e_commerce.notification_service.model.Notification;
 import com.e_commerce.notification_service.repository.NotificationRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final ModelMapper modelMapper;
 
-    @Override
     public NotificationResponseDTO createNotification(NotificationRequestDTO request) {
         Notification notification = Notification.builder()
                 .userId(request.getUserId())
                 .eventType(request.getEventType())
                 .message(request.getMessage())
-                .status("PENDING") // Status default
+                .createdAt(LocalDateTime.now())
+                .status("PENDING") // Default status
                 .build();
 
         Notification savedNotification = notificationRepository.save(notification);
+        log.info("Notification saved: {}", savedNotification);
+
         return modelMapper.map(savedNotification, NotificationResponseDTO.class);
     }
 
     @Override
-    public List<NotificationResponseDTO> getNotificationsByUserId(UUID userId) {
+    public List<NotificationResponseDTO> getNotificationsByUserId(String userId) {
         List<Notification> notifications = notificationRepository.findByUserId(userId);
 
         if (notifications.isEmpty()) {
