@@ -37,7 +37,7 @@ class OrderServiceImplTest {
         orderId = UUID.randomUUID();
         order = Order.builder()
                 .id(orderId)
-                .userId(UUID.randomUUID())
+                .userId("2134hf21")
                 .productId(UUID.randomUUID())
                 .quantity(2)
                 .status("PENDING")

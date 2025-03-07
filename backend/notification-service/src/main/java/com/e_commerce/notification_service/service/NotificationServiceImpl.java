@@ -31,7 +31,6 @@ public class NotificationServiceImpl implements NotificationService {
                 .eventType(request.getEventType())
                 .message(request.getMessage())
                 .createdAt(LocalDateTime.now())
-                .status("PENDING") // Default status
                 .build();
 
         Notification savedNotification = notificationRepository.save(notification);

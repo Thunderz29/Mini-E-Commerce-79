@@ -241,8 +241,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         // Kirim event ke Kafka
-        ForgotPasswordEventDTO event = new ForgotPasswordEventDTO(user.getEmail(), "FORGOT_PASSWORD");
-        kafkaProducerService.sendMessage(USER_FORGOT_PASSWORD_TOPIC, event.toString());
+        ForgotPasswordEventDTO event = new ForgotPasswordEventDTO(user.getId(), user.getEmail(), "FORGOT_PASSWORD");
+        try {
+            String jsonEvent = new ObjectMapper().writeValueAsString(event);
+            kafkaProducerService.sendMessage(USER_FORGOT_PASSWORD_TOPIC, jsonEvent);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize ForgotPasswordEventDTO", e);
+        }
     }
 
     // Update Wallet (Top-Up)

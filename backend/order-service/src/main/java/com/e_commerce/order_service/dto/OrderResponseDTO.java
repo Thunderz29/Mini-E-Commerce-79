@@ -16,7 +16,7 @@ import lombok.Setter;
 @Builder
 public class OrderResponseDTO {
     private UUID id;
-    private UUID userId;
+    private String userId;
     private UUID productId;
     private int quantity;
     private String status;

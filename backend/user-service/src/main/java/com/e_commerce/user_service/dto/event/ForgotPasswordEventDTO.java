@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ForgotPasswordEventDTO {
+    private String userId;
     private String email;
     private String eventType = "FORGOT_PASSWORD";
 }

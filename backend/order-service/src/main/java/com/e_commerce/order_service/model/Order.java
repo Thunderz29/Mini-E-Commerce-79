@@ -31,7 +31,7 @@ public class Order {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    private String userId;
 
     @Column(name = "product_id", nullable = false)
     private UUID productId;

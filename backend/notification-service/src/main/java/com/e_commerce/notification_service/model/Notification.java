@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -26,8 +24,8 @@ import lombok.Setter;
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    @Column(name = "id", updatable = false, nullable = false, unique = true)
+    private String id;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
@@ -38,15 +36,12 @@ public class Notification {
     @Column(name = "message", nullable = false, columnDefinition = "TEXT")
     private String message;
 
-    @Column(name = "status", nullable = false, length = 20)
-    @Builder.Default
-    private String status = "PENDING";
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
-    protected void onCreate() {
+    public void onCreate() {
+        this.id = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
         this.createdAt = LocalDateTime.now();
     }
 }

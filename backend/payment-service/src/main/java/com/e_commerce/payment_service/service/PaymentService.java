@@ -6,5 +6,5 @@ import com.e_commerce.payment_service.dto.PaymentResponseDTO;
 public interface PaymentService {
     PaymentResponseDTO processPayment(PaymentRequestDTO requestDTO);
 
-    PaymentResponseDTO getPaymentById(Long paymentId);
+    PaymentResponseDTO getPaymentById(String paymentId);
 }

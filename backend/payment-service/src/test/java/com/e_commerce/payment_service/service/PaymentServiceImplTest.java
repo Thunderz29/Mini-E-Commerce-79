@@ -36,7 +36,7 @@ class PaymentServiceImplTest {
     @BeforeEach
     void setUp() {
         payment = new Payment();
-        payment.setId(1L);
+        payment.setId("1");
         payment.setOrderId("Order123"); // Integer sesuai model
         payment.setAmount(BigDecimal.valueOf(500)); // Pastikan ini BigDecimal
         payment.setPaymentStatus("PENDING");
@@ -64,9 +64,9 @@ class PaymentServiceImplTest {
 
     @Test
     void testGetPaymentById_Success() {
-        when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
+        when(paymentRepository.findById("1")).thenReturn(Optional.of(payment));
 
-        PaymentResponseDTO response = paymentService.getPaymentById(1L);
+        PaymentResponseDTO response = paymentService.getPaymentById("1");
 
         assertNotNull(response);
         assertEquals(payment.getId(), response.getId());
@@ -79,8 +79,8 @@ class PaymentServiceImplTest {
 
     @Test
     void testGetPaymentById_NotFound() {
-        when(paymentRepository.findById(99L)).thenReturn(Optional.empty());
+        when(paymentRepository.findById("1")).thenReturn(Optional.empty());
 
-        assertThrows(PaymentNotFoundException.class, () -> paymentService.getPaymentById(99L));
+        assertThrows(PaymentNotFoundException.class, () -> paymentService.getPaymentById("1"));
     }
 }

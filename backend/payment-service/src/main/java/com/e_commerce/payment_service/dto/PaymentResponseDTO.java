@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class PaymentResponseDTO {
-    private Long id;
+    private String id;
     private String orderId;
     private BigDecimal amount;
     private String paymentStatus;

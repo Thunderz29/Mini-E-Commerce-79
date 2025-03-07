@@ -17,7 +17,7 @@ import lombok.Setter;
 @Builder
 public class OrderRequestDTO {
     @NotNull(message = "User ID is required")
-    private UUID userId;
+    private String userId;
 
     @NotNull(message = "Product ID is required")
     private UUID productId;

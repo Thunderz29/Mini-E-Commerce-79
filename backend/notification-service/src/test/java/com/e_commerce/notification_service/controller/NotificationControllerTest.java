@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,11 +50,10 @@ class NotificationControllerTest {
                                 .build();
 
                 NotificationResponseDTO responseDTO = NotificationResponseDTO.builder()
-                                .id(UUID.randomUUID())
+                                .id("5678as12")
                                 .userId("1234as12")
                                 .eventType("ORDER_PLACED")
                                 .message("Your order has been placed successfully.")
-                                .status("SENT")
                                 .createdAt(LocalDateTime.now())
                                 .build();
 
@@ -76,20 +74,18 @@ class NotificationControllerTest {
         @Test
         void testGetNotificationsByUserId() throws Exception {
                 NotificationResponseDTO notification1 = NotificationResponseDTO.builder()
-                                .id(UUID.randomUUID())
+                                .id("5678as12")
                                 .userId("1234as12")
                                 .eventType("ORDER_PLACED")
                                 .message("Your order has been placed successfully.")
-                                .status("SENT")
                                 .createdAt(LocalDateTime.now())
                                 .build();
 
                 NotificationResponseDTO notification2 = NotificationResponseDTO.builder()
-                                .id(UUID.randomUUID())
+                                .id("5678as12")
                                 .userId("1234as12")
                                 .eventType("ORDER_SHIPPED")
                                 .message("Your order has been shipped.")
-                                .status("SENT")
                                 .createdAt(LocalDateTime.now())
                                 .build();
 

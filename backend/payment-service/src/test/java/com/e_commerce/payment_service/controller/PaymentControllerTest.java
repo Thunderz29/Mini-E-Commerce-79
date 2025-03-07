@@ -49,7 +49,7 @@ class PaymentControllerTest {
         requestDTO.setAmount(new BigDecimal("150.00"));
 
         PaymentResponseDTO responseDTO = new PaymentResponseDTO();
-        responseDTO.setId(1L);
+        responseDTO.setId("1");
         responseDTO.setOrderId("ORD123");
         responseDTO.setAmount(new BigDecimal("150.00"));
         responseDTO.setPaymentStatus("COMPLETED");
@@ -83,7 +83,7 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentById_Success() throws Exception {
         // Given
-        Long paymentId = 1L;
+        String paymentId = "1";
         PaymentResponseDTO responseDTO = new PaymentResponseDTO();
         responseDTO.setId(paymentId);
         responseDTO.setOrderId("ORD123");
@@ -107,7 +107,7 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentById_NotFound() throws Exception {
         // Given
-        Long paymentId = 99L;
+        String paymentId = "1";
         when(paymentService.getPaymentById(paymentId)).thenThrow(new RuntimeException("Payment not found"));
 
         // When & Then

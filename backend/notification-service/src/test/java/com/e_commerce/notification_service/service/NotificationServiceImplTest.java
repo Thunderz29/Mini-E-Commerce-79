@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,18 +41,16 @@ class NotificationServiceImplTest {
     void setUp() {
         requestDTO = new NotificationRequestDTO("1234as12", "ORDER_PLACED", "Your order has been placed.");
         notification = Notification.builder()
-                .id(UUID.randomUUID())
+                .id("1674as12")
                 .userId("1234as12")
                 .eventType("ORDER_PLACED")
                 .message("Your order has been placed.")
-                .status("PENDING")
                 .build();
         responseDTO = NotificationResponseDTO.builder()
-                .id(UUID.randomUUID())
+                .id("5678as12")
                 .userId("1234as12")
                 .eventType("ORDER_PLACED")
                 .message("Your order has been placed.")
-                .status("PENDING")
                 .build();
     }
 

@@ -17,7 +17,7 @@ import lombok.Data;
 public class User {
 
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false, unique = true)
     private String id;
 
     @Column(name = "username", nullable = false, unique = true)
@@ -42,7 +42,6 @@ public class User {
     public void onCreate() {
         if (this.id == null) {
             this.id = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-            // Menghasilkan 8 karakter dari UUID
         }
         this.createdAt = LocalDateTime.now();
         this.walletBalance = BigDecimal.ZERO;
