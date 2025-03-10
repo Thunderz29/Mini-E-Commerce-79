@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,16 +9,16 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, NgIf, NgFor], // Tambahkan ini
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, HttpClientModule], // Tambahkan ini
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {email: string = '';
+export class LoginComponent {
+  email: string = '';
   password: string = '';
 
   private authService = inject(AuthService); // Inject AuthService
-  private router = inject(Router); // Inject Router jika ingin navigasi setelah login
+  private router = inject(Router);
 
   onLogin() {
     const credentials = { email: this.email, password: this.password };
