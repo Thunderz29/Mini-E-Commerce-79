@@ -1,33 +1,48 @@
-<div class="auth-container">
-  <img src="assets/logo.png" alt="E-Commerce Logo" class="logo">
-  <h2>Register</h2>
-  <form (submit)="onRegister(); $event.preventDefault()">
-    <!-- Username Field -->
-    <mat-form-field appearance="outline" class="input-field">
-      <mat-label>Username</mat-label>
-      <input matInput type="text" [(ngModel)]="user.username" name="username" required>
-    </mat-form-field>
+<div class="auth-wrapper">
+  <div class="auth-container">
+    <app-auth-card title="Register">
+      
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-    <!-- Email Field -->
-    <mat-form-field appearance="outline" class="input-field">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" [(ngModel)]="user.email" name="email" required>
-    </mat-form-field>
+      <form (submit)="onRegister(); $event.preventDefault()">
+        <!-- Username -->
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Username</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput type="text" [(ngModel)]="user.username" name="username" required>
+        </mat-form-field>
 
-    <!-- Password Field -->
-    <mat-form-field appearance="outline" class="input-field">
-      <mat-label>Password</mat-label>
-      <input matInput type="password" [(ngModel)]="user.password" name="password" required>
-    </mat-form-field>
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput type="email" [(ngModel)]="user.email" name="email" (ngModelChange)="validateEmail()" required>
+        </mat-form-field>
+        <p *ngIf="emailError" class="error-message">{{ emailError }}</p>
 
-    <!-- Phone Field -->
-    <mat-form-field appearance="outline" class="input-field">
-      <mat-label>Phone</mat-label>
-      <input matInput type="tel" [(ngModel)]="user.phone" name="phone" required>
-    </mat-form-field>
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput type="password" [(ngModel)]="user.password" name="password" (ngModelChange)="validatePassword()" required>
+        </mat-form-field>
+        <p *ngIf="passwordError" class="error-message">{{ passwordError }}</p>
 
-    <button mat-raised-button color="primary" class="auth-btn" type="submit">Register</button>
+        <!-- Phone -->
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Phone</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input matInput type="tel" [(ngModel)]="user.phone" name="phone" required>
+        </mat-form-field>
 
-    <p>Already have an account? <a routerLink="/login">Login</a></p>
-  </form>
+        <app-auth-button 
+          [text]="'Register'"
+          [isLoading]="isLoading">
+        </app-auth-button>
+
+        <p>Already have an account? <a routerLink="/login">Login</a></p>
+      </form>
+
+    </app-auth-card>
+  </div>
 </div>

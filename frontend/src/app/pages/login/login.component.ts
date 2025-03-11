@@ -1,37 +1,68 @@
+import { CommonModule, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { AuthButtonComponent } from '../../component/auth-button/auth-button.component';
+import { AuthCardComponent } from '../../component/auth-card/auth-card.component';
 import { AuthService } from '../../services/auth.service';
+
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, HttpClientModule], // Tambahkan ini
+  imports: [FormsModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatButtonModule, 
+    HttpClientModule, 
+    MatProgressSpinnerModule, 
+    MatIconModule, 
+    CommonModule, 
+    NgIf,
+    AuthCardComponent,
+    AuthButtonComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  isLoading: boolean = false;
+  errorMessage: string = '';
+  hide: boolean = true;
+  imagePath: String = "images/logo.png"
 
-  private authService = inject(AuthService); // Inject AuthService
-  private router = inject(Router);
+  constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
+    this.errorMessage = '';
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Email dan password harus diisi!';
+      return;
+    }
+
+    this.isLoading = true;
+
     const credentials = { email: this.email, password: this.password };
-    
+
     this.authService.login(credentials).subscribe({
       next: (response) => {
         console.log('Login berhasil:', response);
-        localStorage.setItem('token', response.token); // Simpan token di localStorage
-        this.router.navigate(['/dashboard']); // Redirect ke dashboard
+        localStorage.setItem('token', response.token);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         console.error('Login gagal:', err);
-        alert('Login gagal. Periksa kembali email dan password Anda.');
+        this.errorMessage = 'Login gagal. Periksa kembali email dan password Anda.';
+        this.isLoading = false;
+      },
+      complete: () => {
       }
     });
-  }}
+  }
+}

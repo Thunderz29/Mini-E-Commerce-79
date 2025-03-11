@@ -1,0 +1,10 @@
+<button 
+  mat-raised-button 
+  color="primary" 
+  class="auth-btn"
+  [disabled]="isLoading || disabled">
+  
+  <span *ngIf="!isLoading">{{ text }}</span>
+  
+  <mat-progress-spinner *ngIf="isLoading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+</button>

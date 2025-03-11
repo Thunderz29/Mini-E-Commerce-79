@@ -1,0 +1,37 @@
+.auth-box {
+  background: white;
+  padding: 20px; 
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%; 
+  max-width: 400px; 
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Untuk layar kecil (mobile) */
+@media (max-width: 480px) {
+  .auth-box {
+    padding: 15px;
+    max-width: 90%; 
+  }
+}
+
+/* Untuk layar besar (desktop) */
+@media (min-width: 1024px) {
+  .auth-box {
+    max-width: 450px;
+  }
+}
+
+/* Animasi Muncul */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}

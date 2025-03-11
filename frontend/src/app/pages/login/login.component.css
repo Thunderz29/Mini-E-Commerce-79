@@ -1,55 +1,137 @@
-/* Wrapper agar konten berada di tengah */
-.login-wrapper {
-    display: flex;
-    flex-direction: column;
+/* Wrapper untuk halaman login dan register */
+.auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Kontainer utama (membagi layar menjadi 2 bagian) */
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  gap: 50px;
+  flex-wrap: wrap; /* ✅ Menjadikan responsif saat layar lebih kecil */
+}
+
+/* Logo dan Judul */
+.logo-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-container img {
+  width: 250px;
+  height: auto;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.logo-container h1 {
+  font-size: 26px;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* Animasi Muncul */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Input Field dengan Ikon */
+.input-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+/* Link */
+p a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+p a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Pesan Error */
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Overlay untuk loading */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 📱 Responsiveness untuk layar kecil (Mobile) */
+@media screen and (max-width: 768px) {
+  .auth-container {
+    flex-direction: column; /* ✅ Mengubah tampilan menjadi vertikal di layar kecil */
     align-items: center;
-    justify-content: center;
-    height: 100vh; /* Penuh 1 layar */
-    background-color: #f4f4f4; /* Warna latar belakang */
   }
-  
-  /* Logo dan judul e-commerce */
+
   .logo-container {
-    text-align: center;
-    margin-bottom: 20px;
+    order: -1; /* ✅ Memastikan logo tetap di atas */
   }
-  
+
   .logo-container img {
-    width: 100px; /* Sesuaikan ukuran logo */
-    height: auto;
+    width: 180px; /* ✅ Ukuran logo lebih kecil di layar kecil */
   }
-  
-  .logo-container h1 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+
+  .auth-box {
+    width: 90%;
+    padding: 20px;
   }
-  
-  /* Container Login */
-  .login-container {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 350px;
+
+  .auth-btn {
+    font-size: 14px;
   }
-  
-  .login-container h2 {
-    margin-bottom: 20px;
-    color: #333;
+}
+
+/* 💻 Responsiveness untuk layar besar (Desktop) */
+@media screen and (min-width: 1024px) {
+  .auth-box {
+    max-width: 400px;
   }
-  
-  /* Form input */
-  .input-field {
-    width: 100%;
-    margin-bottom: 20px;
+
+  .logo-container img {
+    width: 220px;
   }
-  
-  /* Tombol Login */
-  .login-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-  }
-  
+}

@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
@@ -24,7 +24,7 @@ bootstrapApplication(AppComponent, {
       { path: 'forgot-password', component: ForgotPasswordComponent },
       { path: 'home', component: HomeComponent }
     ]),
-    provideHttpClient(),
+    provideHttpClient(withFetch()),
     importProvidersFrom(MatInputModule, MatButtonModule, FormsModule)
   ]
 }).catch(err => console.error(err));
