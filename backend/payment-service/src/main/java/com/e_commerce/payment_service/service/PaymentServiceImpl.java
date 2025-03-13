@@ -8,32 +8,39 @@ import org.springframework.transaction.annotation.Transactional;
 import com.e_commerce.payment_service.dto.PaymentRequestDTO;
 import com.e_commerce.payment_service.dto.PaymentResponseDTO;
 import com.e_commerce.payment_service.exception.PaymentNotFoundException;
+import com.e_commerce.payment_service.exception.PaymentProcessingException;
 import com.e_commerce.payment_service.model.Payment;
 import com.e_commerce.payment_service.repository.PaymentRepository;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    private final PaymentRepository paymentRepository;
+    private PaymentRepository paymentRepository;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository) {
-        this.paymentRepository = paymentRepository;
-    }
-
+    // Process Payment
     @Override
     @Transactional
     public PaymentResponseDTO processPayment(PaymentRequestDTO requestDTO) {
-        Payment payment = new Payment();
-        payment.setOrderId(requestDTO.getOrderId());
-        payment.setAmount(requestDTO.getAmount());
-        payment.setPaymentStatus("PENDING");
-        payment.setPaymentDate(LocalDateTime.now());
+        if (requestDTO == null || requestDTO.getOrderId() == null || requestDTO.getAmount() == null) {
+            throw new PaymentProcessingException("Invalid payment request: Order ID and Amount must not be null");
+        }
 
-        payment = paymentRepository.save(payment);
+        try {
+            Payment payment = new Payment();
+            payment.setOrderId(requestDTO.getOrderId());
+            payment.setAmount(requestDTO.getAmount());
+            payment.setPaymentStatus("PENDING");
+            payment.setPaymentDate(LocalDateTime.now());
 
-        return mapToDTO(payment);
+            payment = paymentRepository.save(payment);
+
+            return mapToDTO(payment);
+        } catch (Exception e) {
+            throw new PaymentProcessingException("Failed to process payment: " + e.getMessage());
+        }
     }
 
+    // Get Payment by ID
     @Override
     public PaymentResponseDTO getPaymentById(String paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
@@ -42,6 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
         return mapToDTO(payment);
     }
 
+    // Mapping DTO
     private PaymentResponseDTO mapToDTO(Payment payment) {
         PaymentResponseDTO responseDTO = new PaymentResponseDTO();
         responseDTO.setId(payment.getId());

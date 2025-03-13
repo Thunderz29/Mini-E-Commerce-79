@@ -5,8 +5,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
-import { AuthButtonComponent } from '../../component/auth-button/auth-button.component';
-import { AuthCardComponent } from '../../component/auth-card/auth-card.component';
+import { AuthButtonComponent } from '../../components/auth-button/auth-button.component';
+import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { AuthService } from '../../services/auth.service';
 
 @Component({

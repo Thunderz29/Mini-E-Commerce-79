@@ -1,0 +1,156 @@
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #007bff;
+  color: white;
+}
+
+/* Logo */
+.logo a {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+/* Navigation Links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 0;
+}
+
+.nav-links li {
+  display: inline;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.nav-links li a:hover {
+  text-decoration: underline;
+}
+
+/* Search Bar */
+.search-bar input {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  width: 400px; /* DIPERPANJANG */
+  max-width: 600px;
+}
+
+/* Icons */
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icons a {
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
+  position: relative;
+}
+
+/* Badge untuk jumlah item di keranjang */
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 50%;
+}
+
+/* User Profile */
+.user-profile {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.username {
+  font-size: 14px;
+}
+
+/* Dropdown User Menu */
+.user-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #f8f9fa; /* Warna bg jadi abu-abu muda */
+  color: #000; /* Warna teks jadi hitam */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  list-style: none;
+  padding: 10px 0;
+  width: 160px;
+  font-size: 14px;
+}
+
+.user-dropdown li {
+  padding: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease-in-out;
+}
+
+.user-dropdown li:hover {
+  background: #e9ecef; /* Warna hover lebih soft */
+}
+
+
+.user-dropdown.open {
+  display: block;
+}
+
+/* Mobile Menu */
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  display: none;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  display: none;
+  list-style: none;
+  flex-direction: column;
+  background: #007bff;
+  padding: 15px;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+}
+
+.mobile-menu.open {
+  display: flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+}

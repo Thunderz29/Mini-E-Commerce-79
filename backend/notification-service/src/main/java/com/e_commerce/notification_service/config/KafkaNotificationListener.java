@@ -17,13 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class KafkaNotificationListener {
 
-    private final NotificationService notificationService;
-    private final ObjectMapper objectMapper;
-
-    public KafkaNotificationListener(NotificationService notificationService, ObjectMapper objectMapper) {
-        this.notificationService = notificationService;
-        this.objectMapper = objectMapper;
-    }
+    private NotificationService notificationService;
+    private ObjectMapper objectMapper;
 
     @KafkaListener(topics = "user-login", groupId = "notification-service-group")
     public void listenUserLogin(ConsumerRecord<String, String> record) {

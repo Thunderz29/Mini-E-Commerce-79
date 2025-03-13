@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +15,8 @@ import com.e_commerce.order_service.dto.OrderRequestDTO;
 import com.e_commerce.order_service.dto.OrderResponseDTO;
 import com.e_commerce.order_service.exception.InvalidOrderException;
 import com.e_commerce.order_service.exception.OrderNotFoundException;
+import com.e_commerce.order_service.exception.OrderProcessingException;
+import com.e_commerce.order_service.exception.OrderStatusUpdateException;
 import com.e_commerce.order_service.model.Order;
 import com.e_commerce.order_service.repository.OrderRepository;
 
@@ -24,92 +27,126 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
-        private final OrderRepository orderRepository;
-        private final KafkaProducerService kafkaProducerService;
+        private OrderRepository orderRepository;
+        private KafkaProducerService kafkaProducerService;
 
         // create order
         @Override
         public OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO) {
-                // Validasi jumlah produk yang dipesan harus lebih dari 0
+                if (orderRequestDTO == null) {
+                        throw new InvalidOrderException("Order request cannot be null.");
+                }
+
+                if (orderRequestDTO.getProductId() == null) {
+                        throw new InvalidOrderException("Product ID must not be null or empty.");
+                }
+
+                if (orderRequestDTO.getUserId() == null || orderRequestDTO.getUserId().isEmpty()) {
+                        throw new InvalidOrderException("User ID must not be null or empty.");
+                }
+
                 if (orderRequestDTO.getQuantity() <= 0) {
                         throw new InvalidOrderException("Quantity must be greater than zero.");
                 }
 
-                // Kirim request ke Product Service untuk cek stok
                 String productServiceUrl = "http://localhost:8080/product-service/products/check-stock";
                 RestTemplate restTemplate = new RestTemplate();
 
-                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(productServiceUrl)
-                                .queryParam("orderId", UUID.randomUUID().toString())
-                                .queryParam("productId", orderRequestDTO.getProductId())
-                                .queryParam("quantity", orderRequestDTO.getQuantity());
+                try {
+                        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(productServiceUrl)
+                                        .queryParam("orderId", UUID.randomUUID().toString())
+                                        .queryParam("productId", orderRequestDTO.getProductId())
+                                        .queryParam("quantity", orderRequestDTO.getQuantity());
 
-                restTemplate.postForEntity(builder.toUriString(), null, String.class);
+                        ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), null,
+                                        String.class);
 
-                // Membuat objek Order dari DTO request
-                Order order = Order.builder()
-                                .userId(orderRequestDTO.getUserId())
-                                .productId(orderRequestDTO.getProductId())
-                                .quantity(orderRequestDTO.getQuantity())
-                                .status("PENDING") // Status awal pesanan adalah PENDING
-                                .build();
+                        if (!response.getStatusCode().is2xxSuccessful()) {
+                                throw new OrderProcessingException("Failed to verify stock with product service.");
+                        }
+                } catch (Exception e) {
+                        throw new OrderProcessingException(
+                                        "Error communicating with product service: " + e.getMessage(), e);
+                }
 
-                // Simpan order ke dalam database
-                Order savedOrder = orderRepository.save(order);
+                try {
+                        Order order = Order.builder()
+                                        .userId(orderRequestDTO.getUserId())
+                                        .productId(orderRequestDTO.getProductId())
+                                        .quantity(orderRequestDTO.getQuantity())
+                                        .status("PENDING")
+                                        .build();
 
-                // 🔥 Kirim event order_created ke Kafka
-                kafkaProducerService.sendMessage("order_created", savedOrder);
+                        Order savedOrder = orderRepository.save(order);
 
-                // Mengembalikan response dalam bentuk DTO
-                return mapToDTO(savedOrder);
+                        kafkaProducerService.sendMessage("order_created", savedOrder);
+
+                        return mapToDTO(savedOrder);
+                } catch (Exception e) {
+                        throw new OrderProcessingException("Error saving order to database: " + e.getMessage(), e);
+                }
         }
 
         // get order by id
         @Override
         public OrderResponseDTO getOrderById(UUID id) {
-                // Mencari order berdasarkan ID, jika tidak ditemukan lempar exception
+                if (id == null) {
+                        throw new InvalidOrderException("Order ID cannot be null.");
+                }
+
                 Order order = orderRepository.findById(id)
                                 .orElseThrow(() -> new OrderNotFoundException("Order with ID " + id + " not found."));
+
                 return mapToDTO(order);
         }
 
         // get all orders
         @Override
         public List<OrderResponseDTO> getAllOrders() {
-                // Mengambil semua order dari database dan mengonversinya ke DTO
-                return orderRepository.findAll().stream()
+                List<Order> orders = orderRepository.findAll();
+
+                if (orders.isEmpty()) {
+                        throw new OrderNotFoundException("No orders found.");
+                }
+
+                return orders.stream()
                                 .map(this::mapToDTO)
                                 .collect(Collectors.toList());
         }
 
         // update order status
-        @Override
         public OrderResponseDTO updateOrderStatus(UUID id, String status) {
-                // Mencari order berdasarkan ID, jika tidak ditemukan lempar exception
+                if (id == null || status == null || status.trim().isEmpty()) {
+                        throw new InvalidOrderException("Order ID and status must not be null or empty.");
+                }
+
                 Order order = orderRepository.findById(id)
                                 .orElseThrow(() -> new OrderNotFoundException("Order with ID " + id + " not found."));
 
-                // Order hanya bisa diubah jika statusnya masih PENDING
                 if (!order.getStatus().equals("PENDING")) {
-                        throw new RuntimeException("Cannot update order status after confirmation or cancellation.");
+                        throw new OrderStatusUpdateException(
+                                        "Cannot update order status after confirmation or cancellation.");
                 }
 
-                // Mengupdate status pesanan
                 order.setStatus(status);
                 Order updatedOrder = orderRepository.save(order);
 
-                // Mengembalikan response DTO dari order yang diperbarui
                 return mapToDTO(updatedOrder);
         }
 
         // cancel order
-        @Override
         public void cancelOrder(UUID id) {
-                // Mencari order berdasarkan ID, jika tidak ditemukan lempar exception
+                if (id == null) {
+                        throw new InvalidOrderException("Order ID cannot be null.");
+                }
+
                 Order order = orderRepository.findById(id)
                                 .orElseThrow(() -> new OrderNotFoundException("Order with ID " + id + " not found."));
 
-                // Menghapus order dari database
+                if (!order.getStatus().equals("PENDING")) {
+                        throw new OrderStatusUpdateException("Only pending orders can be canceled.");
+                }
+
                 orderRepository.delete(order);
         }
 

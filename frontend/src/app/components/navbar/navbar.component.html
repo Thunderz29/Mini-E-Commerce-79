@@ -1,0 +1,58 @@
+<nav class="navbar">
+  <!-- Logo -->
+  <div class="logo">
+    <a href="#">ShopLogo</a>
+  </div>
+
+  <!-- Desktop Menu -->
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Shop</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search for products...">
+  </div>
+
+  <!-- Icons & User Menu -->
+  <div class="icons">
+    <!-- Keranjang Belanja -->
+    <a href="#" class="cart">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge">{{ cartItemCount }}</span>
+    </a>
+
+    <!-- Order History -->
+    <a href="#" class="order-history">
+      <i class="fas fa-box"></i>
+    </a>
+
+    <!-- User Profile -->
+    <div class="user-profile" (click)="toggleUserMenu()">
+      <i class="fas fa-user"></i>
+      <span class="username">{{ userName }}</span>
+      <ul class="user-dropdown" [class.open]="isUserMenuOpen">
+        <li><a href="#">Profile</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a href="#">Order History</a></li>
+        <li (click)="logout()">Logout</li>
+      </ul>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="menu-btn" (click)="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <ul class="mobile-menu" [class.open]="isMenuOpen">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Shop</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>

@@ -1,6 +1,7 @@
 package com.e_commerce.user_service.service;
 
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
+import com.e_commerce.user_service.dto.CurrentUserDTO;
 import com.e_commerce.user_service.dto.ForgotPasswordDTO;
 import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
@@ -33,4 +34,7 @@ public interface UserService {
 
     // Update Wallet (Top-Up)
     UserResponseDTO updateWallet(String id, WalletUpdateDTO walletUpdateDTO);
+
+    // Get Current User Login
+    CurrentUserDTO getCurrentLoggedInUser();
 }

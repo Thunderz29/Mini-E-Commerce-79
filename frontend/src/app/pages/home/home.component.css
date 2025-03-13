@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  /* Konten utama */
+  .content {
+    flex: 1;
+    max-width: 100%;
+  }
+  
+  /* Responsif: Sidebar jadi full-width di mobile */
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+  
+    app-sidebar {
+      width: 100%;
+    }
+  }
+  

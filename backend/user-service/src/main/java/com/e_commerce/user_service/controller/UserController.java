@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
+import com.e_commerce.user_service.dto.CurrentUserDTO;
 import com.e_commerce.user_service.dto.UpdateUserRequestDTO;
 import com.e_commerce.user_service.dto.UserResponseDTO;
 import com.e_commerce.user_service.dto.WalletUpdateDTO;
@@ -83,6 +84,13 @@ public class UserController {
             @RequestBody @Valid WalletUpdateDTO walletUpdateDTO) {
         UserResponseDTO updatedUser = userService.updateWallet(id, walletUpdateDTO);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    // Get Current User Login
+    @GetMapping("/current")
+    public ResponseEntity<CurrentUserDTO> getCurrentUser() {
+        CurrentUserDTO currentUser = userService.getCurrentLoggedInUser();
+        return ResponseEntity.status(currentUser.getStatusCode()).body(currentUser);
     }
 
     // Menangani semua ResponseStatusException agar format JSON tetap konsisten

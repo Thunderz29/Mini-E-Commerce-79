@@ -1,5 +1,7 @@
 package com.e_commerce.product_service.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,9 @@ import com.e_commerce.product_service.config.KafkaProducerService;
 import com.e_commerce.product_service.dto.ProductRequestDTO;
 import com.e_commerce.product_service.dto.ProductResponseDTO;
 import com.e_commerce.product_service.dto.StockUpdateDTO;
+import com.e_commerce.product_service.exception.BadRequestException;
+import com.e_commerce.product_service.exception.ProductException;
+import com.e_commerce.product_service.exception.ProductNotFoundException;
 import com.e_commerce.product_service.exception.ResourceNotFoundException;
 import com.e_commerce.product_service.listener.KafkaUserListener;
 import com.e_commerce.product_service.model.Product;
@@ -29,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final KafkaProducerService kafkaProducerService;
     private final KafkaUserListener kafkaUserListener;
 
+    // Create Product
     @Override
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
         Product product = new Product();
@@ -57,39 +63,70 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    // Get Product by ID
     @Override
     public ProductResponseDTO getProductById(Long id) {
+        if (id == null || id <= 0) {
+            throw new BadRequestException("Product ID must be a positive number");
+        }
+
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + id));
+
         return mapToResponseDTO(product);
     }
 
     @Override
     @Transactional
     public Page<ProductResponseDTO> getAllProducts(String sortBy, String direction, int page, int size) {
-        // String userId =
-        // SecurityContextHolder.getContext().getAuthentication().getName();
-        // String token = kafkaUserListener.getUserToken(userId);
+        if (page < 0 || size <= 0) {
+            throw new BadRequestException("Page number must be 0 or greater, and size must be greater than 0");
+        }
 
-        // if (token == null) {
-        // throw new SecurityException("Unauthorized access. Please login first.");
-        // }
+        if (sortBy == null || sortBy.trim().isEmpty()) {
+            throw new BadRequestException("Sort field cannot be empty");
+        }
 
-        // System.out.println("User ID from Kafka Token: " + userId);
+        if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")) {
+            throw new BadRequestException("Sort direction must be 'asc' or 'desc'");
+        }
 
-        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort;
+        try {
+            sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid sorting field: " + sortBy);
+        }
+
         Pageable pageable = PageRequest.of(page, size, sort);
-
         Page<Product> productsPage = productRepository.findAll(pageable);
+
+        if (productsPage.isEmpty()) {
+            throw new ProductNotFoundException("No products found");
+        }
+
         return productsPage.map(this::mapToResponseDTO);
     }
 
+    // Update Product
     @Override
     public ProductResponseDTO updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Produk dengan ID " + productId + " tidak ditemukan"));
 
-        // ✅ Update data produk
+        if (productRequestDTO.getName() == null || productRequestDTO.getName().trim().isEmpty()) {
+            throw new BadRequestException("Nama produk tidak boleh kosong");
+        }
+        if (productRequestDTO.getDescription() == null || productRequestDTO.getDescription().trim().isEmpty()) {
+            throw new BadRequestException("Deskripsi produk tidak boleh kosong");
+        }
+        if (productRequestDTO.getPrice() == null || productRequestDTO.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BadRequestException("Harga produk tidak boleh negatif");
+        }
+        if (productRequestDTO.getQuantity() < 0) {
+            throw new BadRequestException("Jumlah stok tidak boleh negatif");
+        }
+
         product.setName(productRequestDTO.getName());
         product.setDescription(productRequestDTO.getDescription());
         product.setPrice(productRequestDTO.getPrice());
@@ -98,17 +135,11 @@ public class ProductServiceImpl implements ProductService {
 
         if (productRequestDTO.getFile() != null && !productRequestDTO.getFile().isEmpty()) {
             try {
-                // Hapus gambar lama jika ada
-                // if (product.getImageUrl() != null) {
-                // minioService.deleteFile("product-images", product.getImageUrl());
-                // }
-
-                // Upload gambar baru
                 String newImageUrl = minioService.uploadFile(productRequestDTO.getFile(), "product-images");
                 product.setImageUrl(newImageUrl);
             } catch (Exception e) {
                 log.error("❌ Gagal mengganti foto produk: {}", e.getMessage());
-                throw new RuntimeException("Gagal mengganti foto produk, silakan coba lagi.");
+                throw new ProductException("Gagal mengganti foto produk, silakan coba lagi.");
             }
         }
 
@@ -116,11 +147,41 @@ public class ProductServiceImpl implements ProductService {
         return mapToResponseDTO(updatedProduct);
     }
 
+    // Delete Product
     @Override
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
-        productRepository.delete(product);
+
+        try {
+            productRepository.delete(product);
+            log.info("✅ Produk dengan ID {} berhasil dihapus", id);
+        } catch (Exception e) {
+            log.error("❌ Gagal menghapus produk: {}", e.getMessage());
+            throw new ProductException("Gagal menghapus produk, silakan coba lagi.");
+        }
+    }
+
+    // Check And Update Stock
+    @Transactional
+    public void checkAndUpdateStock(String orderId, Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+
+        if (quantity <= 0) {
+            throw new BadRequestException("Jumlah produk harus lebih dari 0");
+        }
+
+        if (product.getQuantity() < quantity) {
+            throw new ProductException("Stok tidak mencukupi untuk produk dengan ID: " + productId);
+        }
+
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
+
+        StockUpdateDTO stockUpdateDTO = new StockUpdateDTO(orderId, true);
+        kafkaProducerService.sendStockUpdate(stockUpdateDTO);
+        log.info("✅ Stock update sent for order {}: {}", orderId, true);
     }
 
     // Utility method to map Product entity to ProductResponseDTO
@@ -135,23 +196,6 @@ public class ProductServiceImpl implements ProductService {
         responseDTO.setImageUrl(product.getImageUrl());
 
         return responseDTO;
-    }
-
-    @Transactional
-    public void checkAndUpdateStock(String orderId, Long productId, int quantity) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
-
-        boolean stockAvailable = product.getQuantity() >= quantity;
-
-        if (stockAvailable) {
-            product.setQuantity(product.getQuantity() - quantity);
-            productRepository.save(product);
-        }
-
-        StockUpdateDTO stockUpdateDTO = new StockUpdateDTO(orderId, stockAvailable);
-        kafkaProducerService.sendStockUpdate(stockUpdateDTO);
-        log.info("✅ Stock update sent for order {}: {}", orderId, stockAvailable);
     }
 
 }
