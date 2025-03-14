@@ -22,6 +22,16 @@
   height: auto;
 }
 
+/* Pesan Error */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+
 /* Animasi Muncul */
 @keyframes fadeIn {
   from {

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { AuthButtonComponent } from '../../components/auth-button/auth-button.component';
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { AuthService } from '../../services/auth.service';
+import { ForgotPasswordDTO } from '../../models/forgot-password.model';
 
 @Component({
   selector: 'app-forgot-password',
@@ -58,17 +59,23 @@ export class ForgotPasswordComponent {
 
     this.isLoading = true;
 
-    // this.authService.resetPassword({ email: this.email, newPassword: this.newPassword }).subscribe({
-    //   next: () => {
-    //     alert('Password berhasil direset!');
-    //     this.router.navigate(['/login']);
-    //   },
-    //   error: (err) => {
-    //     this.errorMessage = err.error?.message || 'Terjadi kesalahan, coba lagi.';
-    //   },
-    //   complete: () => {
-    //     this.isLoading = false;
-    //   }
-    // });
+    const resetData: ForgotPasswordDTO = {
+      email: this.email,
+      newPassword: this.newPassword,
+      confirmPassword: this.confirmPassword
+    };
+
+    this.authService.resetPassword(resetData).subscribe({
+      next: () => {
+        alert('Password berhasil direset! Silakan login dengan password baru.');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Terjadi kesalahan, coba lagi.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 }

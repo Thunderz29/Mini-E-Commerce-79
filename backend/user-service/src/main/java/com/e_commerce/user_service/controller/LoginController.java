@@ -15,7 +15,6 @@ import com.e_commerce.user_service.service.UserService;
 
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/auth")
 public class LoginController {

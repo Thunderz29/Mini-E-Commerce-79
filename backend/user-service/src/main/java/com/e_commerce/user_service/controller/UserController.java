@@ -28,7 +28,6 @@ import com.e_commerce.user_service.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor

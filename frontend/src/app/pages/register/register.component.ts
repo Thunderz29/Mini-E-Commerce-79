@@ -78,9 +78,9 @@ export class RegisterComponent {
       error: (error) => {
         this.errorMessage = `Registrasi gagal! ${error.error?.message || 'Silakan coba lagi.'}`;
         console.error(error);
+        this.isLoading = false;
       },
       complete: () => {
-        this.isLoading = false;
       }
     });
   }

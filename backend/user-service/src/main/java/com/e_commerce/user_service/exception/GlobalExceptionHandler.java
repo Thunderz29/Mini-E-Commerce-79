@@ -56,7 +56,16 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 request.getDescription(false),
                 LocalDateTime.now());
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED); // 🔥 Ubah jadi 401 Unauthorized
+    }
+    
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                ex.getMessage(),
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
