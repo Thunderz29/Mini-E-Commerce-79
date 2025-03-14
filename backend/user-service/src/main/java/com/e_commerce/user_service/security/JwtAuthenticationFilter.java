@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(token)) {
             if (jwtTokenProvider.validateToken(token)) {
                 Claims claims = jwtTokenProvider.getClaims(token);
-                String userId = claims.getSubject(); // Ambil userId dari token
+                String userId = claims.getSubject();
                 String email = claims.get("email", String.class);
 
                 System.out.println("Token User ID: " + userId);

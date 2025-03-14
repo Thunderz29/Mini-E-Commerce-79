@@ -6,6 +6,21 @@
     max-width: 1200px;
     margin: auto;
   }
+
+  .sort-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+  
+  .sort-container select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }  
   
   /* Responsif untuk layar kecil */
   @media (max-width: 768px) {
