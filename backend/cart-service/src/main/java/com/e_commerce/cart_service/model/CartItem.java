@@ -1,5 +1,7 @@
 package com.e_commerce.cart_service.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +32,15 @@ public class CartItem {
 
     @Column(name = "product_id", nullable = false)
     private String productId;
+
+    @Column(name = "product_name", nullable = false)
+    private String productName;
+
+    @Column(name = "product_price", nullable = false)
+    private BigDecimal productPrice;
+
+    @Column(name = "product_image", nullable = false)
+    private String productImage;
 
     @Column(name = "quantity", nullable = false)
     private int quantity;

@@ -167,7 +167,12 @@ public class CartServiceImpl implements CartService {
     // Helper method untuk mengubah Cart ke CartResponseDTO
     private CartResponseDTO convertToCartResponseDTO(Cart cart) {
         List<CartItemResponseDTO> items = cart.getItems().stream()
-                .map(item -> new CartItemResponseDTO(item.getProductId(), item.getQuantity()))
+                .map(item -> new CartItemResponseDTO(
+                        item.getProductId(),
+                        item.getProductName(),
+                        item.getProductPrice(),
+                        item.getProductImage(),
+                        item.getQuantity()))
                 .collect(Collectors.toList());
 
         return CartResponseDTO.builder()
@@ -176,4 +181,5 @@ public class CartServiceImpl implements CartService {
                 .items(items)
                 .build();
     }
+
 }

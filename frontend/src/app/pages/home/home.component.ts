@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { ProductListComponent } from '../../components/product-list/product-list.component';
@@ -11,4 +11,10 @@ import { ProductListComponent } from '../../components/product-list/product-list
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {}
+export class HomeComponent {
+  @ViewChild(ProductListComponent) productList!: ProductListComponent;
+
+  onSearch(searchTerm: string) {
+    this.productList.filterProducts(searchTerm);
+  }
+}

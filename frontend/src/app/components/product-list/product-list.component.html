@@ -1,4 +1,23 @@
+<!-- Dropdown Filter -->
+<div class="sort-container">
+  <label for="sort">Sort by:</label>
+  <select id="sort" [(ngModel)]="sortOption" (change)="sortProducts()">
+    <option value="">-- Select --</option>
+    <option value="name-asc">A - Z</option>
+    <option value="name-desc">Z - A</option>
+    <option value="price-asc">Price: Low to High</option>
+    <option value="price-desc">Price: High to Low</option>
+  </select>
+</div>
+
+<!-- Product List -->
 <div class="product-list">
-    <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
-  </div>
-  
+  <app-product-card 
+    *ngFor="let product of filteredProducts | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }" 
+    [product]="product">
+  </app-product-card>
+</div>
+
+
+<!-- Pagination Controls -->
+<pagination-controls (pageChange)="currentPage = $event"></pagination-controls>

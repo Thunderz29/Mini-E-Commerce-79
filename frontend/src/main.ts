@@ -6,6 +6,7 @@ import { AppComponent } from './app/app.component';
 import { ForgotPasswordComponent } from './app/pages/forgot-password/forgot-password.component';
 import { HomeComponent } from './app/pages/home/home.component';
 import { LoginComponent } from './app/pages/login/login.component';
+import { ProductDetailComponent } from './app/pages/product-detail/product-detail.component';
 import { RegisterComponent } from './app/pages/register/register.component';
 
 // Angular Material
@@ -22,7 +23,8 @@ bootstrapApplication(AppComponent, {
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot-password', component: ForgotPasswordComponent },
-      { path: 'home', component: HomeComponent }
+      { path: 'home', component: HomeComponent },
+      { path: 'product', component: ProductDetailComponent }
     ]),
     provideHttpClient(withFetch()),
     importProvidersFrom(MatInputModule, MatButtonModule, FormsModule)

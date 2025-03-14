@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -13,6 +14,9 @@ export class NavbarComponent {
   isUserMenuOpen = false;
   cartItemCount = 3;
   userName = 'John Doe'; 
+  searchQuery = ''; 
+
+  @Output() searchEvent = new EventEmitter<string>();
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -24,5 +28,9 @@ export class NavbarComponent {
 
   logout() {
     console.log('User logged out');
+  }
+
+  onSearch() {
+    this.searchEvent.emit(this.searchQuery);
   }
 }
