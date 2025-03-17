@@ -16,7 +16,6 @@ import com.e_commerce.product_service.exception.BadRequestException;
 import com.e_commerce.product_service.exception.ProductException;
 import com.e_commerce.product_service.exception.ProductNotFoundException;
 import com.e_commerce.product_service.exception.ResourceNotFoundException;
-import com.e_commerce.product_service.listener.KafkaUserListener;
 import com.e_commerce.product_service.model.Product;
 import com.e_commerce.product_service.repository.ProductRepository;
 
@@ -32,7 +31,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final MinioService minioService;
     private final KafkaProducerService kafkaProducerService;
-    private final KafkaUserListener kafkaUserListener;
 
     // Create Product
     @Override

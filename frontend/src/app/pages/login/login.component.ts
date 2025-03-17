@@ -1,6 +1,6 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,7 +37,8 @@ export class LoginComponent {
   hide: boolean = true;
   imagePath: String = "images/logo.png"
 
-  constructor(private authService: AuthService, private router: Router) {}
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   onLogin() {
     this.errorMessage = '';
@@ -54,7 +55,14 @@ export class LoginComponent {
       next: (response) => {
         console.log('Login berhasil:', response);
         localStorage.setItem('token', response.token);
-        this.router.navigate(['/home']);
+
+        this.router.navigate(['/home'], { state: { loginSuccess: true, userName: "user" } });
+
+        if (localStorage.getItem('token')) {
+          this.router.navigate(['/home']);
+        } else {
+          this.errorMessage = 'Gagal menyimpan sesi. Coba lagi.';
+        }
       },
       error: (err) => {
         console.error('Login gagal:', err);
@@ -62,6 +70,7 @@ export class LoginComponent {
         this.isLoading = false;
       },
       complete: () => {
+        this.isLoading = false;
       }
     });
   }

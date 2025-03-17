@@ -1,5 +1,7 @@
 <app-navbar (searchEvent)="onSearch($event)"></app-navbar>
 
+<app-notification *ngIf="showSuccessMessage" [message]="'Login berhasil, selamat datang ' + userName + '!'" type="success"></app-notification>
+
 <div class="container">  
   <div class="content">
     <app-product-list #productList></app-product-list>

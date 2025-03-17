@@ -16,6 +16,9 @@ import { MatInputModule } from '@angular/material/input';
 // Forms
 import { FormsModule } from '@angular/forms';
 
+// Import AuthGuard
+import { AuthGuard } from './app/guards/auth.guard';
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter([
@@ -23,8 +26,8 @@ bootstrapApplication(AppComponent, {
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot-password', component: ForgotPasswordComponent },
-      { path: 'home', component: HomeComponent },
-      { path: 'product', component: ProductDetailComponent }
+      { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+      { path: 'product', component: ProductDetailComponent, canActivate: [AuthGuard] }
     ]),
     provideHttpClient(withFetch()),
     importProvidersFrom(MatInputModule, MatButtonModule, FormsModule)

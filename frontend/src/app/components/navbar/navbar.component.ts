@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -13,8 +14,10 @@ export class NavbarComponent {
   isMenuOpen = false;
   isUserMenuOpen = false;
   cartItemCount = 3;
-  userName = 'John Doe'; 
+  userName = 'User'; 
   searchQuery = ''; 
+
+  constructor(private router: Router) {}
 
   @Output() searchEvent = new EventEmitter<string>();
 
@@ -26,9 +29,12 @@ export class NavbarComponent {
     this.isUserMenuOpen = !this.isUserMenuOpen;
   }
 
-  logout() {
-    console.log('User logged out');
+  logout(event: Event) {
+    event.stopPropagation();
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
   }
+  
 
   onSearch() {
     this.searchEvent.emit(this.searchQuery);

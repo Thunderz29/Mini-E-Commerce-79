@@ -63,10 +63,10 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String direction,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        Page<ProductResponseDTO> products = productService.getAllProducts(sortBy, direction, page, size);
+        Page<ProductResponseDTO> products = productService.getAllProducts(sortBy, direction, page - 1, size);
         return ResponseEntity.ok(products);
     }
 

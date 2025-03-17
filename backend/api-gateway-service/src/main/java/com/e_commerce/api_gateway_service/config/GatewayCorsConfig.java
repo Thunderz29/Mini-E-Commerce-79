@@ -11,10 +11,10 @@ public class GatewayCorsConfig {
     @Bean
     public CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:4200"); // Izinkan Angular
-        config.addAllowedMethod("*"); // Izinkan semua metode
-        config.addAllowedHeader("*"); // Izinkan semua header
-        config.setAllowCredentials(true); // Izinkan credentials
+        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -22,4 +22,3 @@ public class GatewayCorsConfig {
         return new CorsWebFilter(source);
     }
 }
-

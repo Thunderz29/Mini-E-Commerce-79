@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { AuthButtonComponent } from '../../components/auth-button/auth-button.component';
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
-import { AuthService } from '../../services/auth.service';
 import { ForgotPasswordDTO } from '../../models/forgot-password.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',

@@ -3,12 +3,10 @@ package com.e_commerce.user_service.service;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.e_commerce.user_service.config.KafkaProducerService;
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
@@ -249,39 +247,38 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    // login user
     @Override
-public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-    if (loginRequest.getEmail() == null || loginRequest.getEmail().trim().isEmpty()) {
-        throw new IllegalArgumentException("Email tidak boleh kosong");
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        if (loginRequest.getEmail() == null || loginRequest.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email tidak boleh kosong");
+        }
+        if (loginRequest.getPassword() == null || loginRequest.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password tidak boleh kosong");
+        }
+
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("Email not found: " + loginRequest.getEmail()));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new SecurityException("Email atau password salah.");
+        }
+
+        String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
+
+        UserLoginEventDTO event = new UserLoginEventDTO(user.getId(), user.getUsername(), user.getEmail(), token,
+                "USER_LOGIN");
+
+        try {
+            String jsonEvent = new ObjectMapper().writeValueAsString(event);
+            kafkaProducerService.sendMessage(USER_LOGIN_TOPIC, jsonEvent);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize UserLoginEventDTO", e);
+            throw new UserException("Gagal memproses login event");
+        }
+
+        return new LoginResponseDTO(200, token, "Login successful");
     }
-    if (loginRequest.getPassword() == null || loginRequest.getPassword().trim().isEmpty()) {
-        throw new IllegalArgumentException("Password tidak boleh kosong");
-    }
-
-    User user = userRepository.findByEmail(loginRequest.getEmail())
-            .orElseThrow(() -> new UserNotFoundException("Email not found: " + loginRequest.getEmail()));
-
-    if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-    throw new SecurityException("Email atau password salah.");
-}
-
-
-    String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
-
-    UserLoginEventDTO event = new UserLoginEventDTO(user.getId(), user.getUsername(), user.getEmail(), token,
-            "USER_LOGIN");
-
-    try {
-        String jsonEvent = new ObjectMapper().writeValueAsString(event);
-        kafkaProducerService.sendMessage(USER_LOGIN_TOPIC, jsonEvent);
-    } catch (JsonProcessingException e) {
-        log.error("Failed to serialize UserLoginEventDTO", e);
-        throw new UserException("Gagal memproses login event");
-    }
-
-    return new LoginResponseDTO(200, token, "Login successful");
-}
-
 
     // Forgot Password User
     @Override
