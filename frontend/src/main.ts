@@ -8,6 +8,7 @@ import { HomeComponent } from './app/pages/home/home.component';
 import { LoginComponent } from './app/pages/login/login.component';
 import { ProductDetailComponent } from './app/pages/product-detail/product-detail.component';
 import { RegisterComponent } from './app/pages/register/register.component';
+import { UserProfileComponent } from './app/pages/user-profile/user-profile.component';
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +27,7 @@ bootstrapApplication(AppComponent, {
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot-password', component: ForgotPasswordComponent },
+      { path: 'profile', component: UserProfileComponent },
       { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'product', component: ProductDetailComponent, canActivate: [AuthGuard] }
     ]),

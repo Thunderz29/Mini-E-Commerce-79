@@ -4,7 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 // import { OrdersComponent } from './pages/orders/orders.component';
-// import { ProfileComponent } from './pages/profile/profile.component';
+import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 // import { CartComponent } from './pages/cart/cart.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 
@@ -15,7 +15,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   // { path: 'cart', component: CartComponent },
   // { path: 'orders', component: OrdersComponent },
-  // { path: 'profile', component: ProfileComponent },
+  { path: 'profile', component: UserProfileComponent },
   { path: 'product', component: ProductDetailComponent },
 
   ];
