@@ -1,4 +1,4 @@
-package com.e_commerce.product_service.service;
+package com.e_commerce.product_service.service.minio;
 
 import java.io.InputStream;
 import java.util.UUID;

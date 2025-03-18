@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.e_commerce.product_service.config.KafkaProducerService;
 import com.e_commerce.product_service.dto.ProductRequestDTO;
 import com.e_commerce.product_service.dto.ProductResponseDTO;
 import com.e_commerce.product_service.dto.StockUpdateDTO;
@@ -18,6 +17,8 @@ import com.e_commerce.product_service.exception.ProductNotFoundException;
 import com.e_commerce.product_service.exception.ResourceNotFoundException;
 import com.e_commerce.product_service.model.Product;
 import com.e_commerce.product_service.repository.ProductRepository;
+import com.e_commerce.product_service.service.kafka.KafkaProducerService;
+import com.e_commerce.product_service.service.minio.MinioService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +64,8 @@ public class ProductServiceImpl implements ProductService {
 
     // Get Product by ID
     @Override
-    public ProductResponseDTO getProductById(Long id) {
-        if (id == null || id <= 0) {
+    public ProductResponseDTO getProductById(String id) {
+        if (id == null) {
             throw new BadRequestException("Product ID must be a positive number");
         }
 
@@ -108,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
 
     // Update Product
     @Override
-    public ProductResponseDTO updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
+    public ProductResponseDTO updateProduct(String productId, ProductRequestDTO productRequestDTO) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Produk dengan ID " + productId + " tidak ditemukan"));
 
@@ -147,7 +148,7 @@ public class ProductServiceImpl implements ProductService {
 
     // Delete Product
     @Override
-    public void deleteProduct(Long id) {
+    public void deleteProduct(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
 
@@ -162,7 +163,7 @@ public class ProductServiceImpl implements ProductService {
 
     // Check And Update Stock
     @Transactional
-    public void checkAndUpdateStock(String orderId, Long productId, int quantity) {
+    public void checkAndUpdateStock(String orderId, String productId, int quantity) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
 

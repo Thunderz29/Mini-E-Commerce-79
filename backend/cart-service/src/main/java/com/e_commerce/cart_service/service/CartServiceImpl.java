@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.e_commerce.cart_service.client.ProductClient;
 import com.e_commerce.cart_service.dto.CartItemRequestDTO;
 import com.e_commerce.cart_service.dto.CartItemResponseDTO;
 import com.e_commerce.cart_service.dto.CartResponseDTO;
 import com.e_commerce.cart_service.dto.UpdateCartItemDTO;
+import com.e_commerce.cart_service.dto.client.ProductResponseDTO;
 import com.e_commerce.cart_service.exception.CartException;
 import com.e_commerce.cart_service.exception.CartNotFoundException;
 import com.e_commerce.cart_service.exception.ProductNotFoundException;
@@ -28,6 +30,7 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final ProductClient productClient; // Tambahkan Feign Client
 
     // Mendapatkan keranjang berdasarkan userId
     @Override
@@ -167,12 +170,17 @@ public class CartServiceImpl implements CartService {
     // Helper method untuk mengubah Cart ke CartResponseDTO
     private CartResponseDTO convertToCartResponseDTO(Cart cart) {
         List<CartItemResponseDTO> items = cart.getItems().stream()
-                .map(item -> new CartItemResponseDTO(
-                        item.getProductId(),
-                        item.getProductName(),
-                        item.getProductPrice(),
-                        item.getProductImage(),
-                        item.getQuantity()))
+                .map(item -> {
+                    // 🔥 Ambil informasi produk dari product-service
+                    ProductResponseDTO product = productClient.getProductById(item.getProductId());
+
+                    return new CartItemResponseDTO(
+                            item.getProductId(),
+                            product.getName(), // Ambil nama dari ProductResponseDTO
+                            product.getPrice(), // Ambil harga dari ProductResponseDTO
+                            product.getImageUrl(), // Ambil gambar dari ProductResponseDTO
+                            item.getQuantity());
+                })
                 .collect(Collectors.toList());
 
         return CartResponseDTO.builder()

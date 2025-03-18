@@ -12,7 +12,8 @@ import com.e_commerce.notification_service.model.Notification;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, String> {
 
-    // ✅ Native Query untuk mencari semua notifikasi berdasarkan userId
-    @Query(value = "SELECT * FROM notifications WHERE user_id = :userId ORDER BY created_at DESC", nativeQuery = true)
+    // ✅ JPQL Query untuk mencari semua notifikasi berdasarkan userId dan urut
+    // berdasarkan createdAt DESC
+    @Query("SELECT n FROM Notification n WHERE n.userId = :userId ORDER BY n.createdAt DESC")
     List<Notification> findByUserId(@Param("userId") String userId);
 }

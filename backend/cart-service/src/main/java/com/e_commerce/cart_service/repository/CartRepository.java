@@ -12,7 +12,7 @@ import com.e_commerce.cart_service.model.Cart;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, String> {
 
-    // ✅ Native Query untuk mencari cart berdasarkan userId
-    @Query(value = "SELECT * FROM carts WHERE user_id = :userId LIMIT 1", nativeQuery = true)
+    // ✅ JPQL Query untuk mencari cart berdasarkan userId
+    @Query("SELECT c FROM Cart c WHERE c.userId = :userId")
     Optional<Cart> findByUserId(@Param("userId") String userId);
 }

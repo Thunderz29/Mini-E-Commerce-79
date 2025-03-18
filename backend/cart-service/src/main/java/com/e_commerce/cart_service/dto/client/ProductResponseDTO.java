@@ -1,4 +1,4 @@
-package com.e_commerce.product_service.dto;
+package com.e_commerce.cart_service.dto.client;
 
 import java.math.BigDecimal;
 

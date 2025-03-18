@@ -1,4 +1,4 @@
-package com.e_commerce.user_service.config;
+package com.e_commerce.user_service.service.kafka;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

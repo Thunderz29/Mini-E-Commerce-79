@@ -12,7 +12,7 @@ import com.e_commerce.cart_service.model.CartItem;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, String> {
 
-    // ✅ Native Query untuk mencari CartItem berdasarkan cartId dan productId
-    @Query(value = "SELECT * FROM cart_items WHERE cart_id = :cartId AND product_id = :productId LIMIT 1", nativeQuery = true)
+    // ✅ JPQL Query untuk mencari CartItem berdasarkan cartId dan productId
+    @Query("SELECT ci FROM CartItem ci WHERE ci.cart.id = :cartId AND ci.productId = :productId")
     Optional<CartItem> findByCartIdAndProductId(@Param("cartId") String cartId, @Param("productId") String productId);
 }

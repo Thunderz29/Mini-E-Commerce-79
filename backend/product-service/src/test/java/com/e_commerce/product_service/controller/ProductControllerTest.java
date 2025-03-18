@@ -52,7 +52,7 @@ class ProductControllerTest {
                 requestDTO.setQuantity(10);
                 requestDTO.setCategory("Electronics");
 
-                ProductResponseDTO responseDTO = new ProductResponseDTO(1L, "Test Product", "This is a test product",
+                ProductResponseDTO responseDTO = new ProductResponseDTO("123", "Test Product", "This is a test product",
                                 new BigDecimal("100.00"), 10, "Electronics", "image.jpg");
 
                 MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg",
@@ -79,12 +79,12 @@ class ProductControllerTest {
         @Test
         @DisplayName("✅ Should get product by ID")
         void testGetProductById() throws Exception {
-                ProductResponseDTO responseDTO = new ProductResponseDTO(1L, "Test Product", "Description",
+                ProductResponseDTO responseDTO = new ProductResponseDTO("123", "Test Product", "Description",
                                 new BigDecimal("100.00"), 10, "Electronics", "image.jpg");
 
-                when(productService.getProductById(1L)).thenReturn(responseDTO);
+                when(productService.getProductById("123")).thenReturn(responseDTO);
 
-                mockMvc.perform(get("/products/{id}", 1L))
+                mockMvc.perform(get("/products/{id}", "123"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.productId").value(1))
                                 .andExpect(jsonPath("$.name").value("Test Product"))
@@ -92,7 +92,7 @@ class ProductControllerTest {
                                 .andExpect(jsonPath("$.quantity").value(10))
                                 .andExpect(jsonPath("$.category").value("Electronics"));
 
-                verify(productService).getProductById(1L);
+                verify(productService).getProductById("123");
         }
 
         // @Test
@@ -127,7 +127,7 @@ class ProductControllerTest {
                 requestDTO.setQuantity(20);
                 requestDTO.setCategory("Gaming");
 
-                ProductResponseDTO responseDTO = new ProductResponseDTO(1L, "Updated Product", "Updated Description",
+                ProductResponseDTO responseDTO = new ProductResponseDTO("123", "Updated Product", "Updated Description",
                                 new BigDecimal("150.00"), 20, "Gaming", "updated.jpg");
 
                 MockMultipartFile file = new MockMultipartFile("file", "updated.jpg", "image/jpeg",
@@ -135,7 +135,7 @@ class ProductControllerTest {
                 MockMultipartFile productJson = new MockMultipartFile("product", "product.json", "application/json",
                                 objectMapper.writeValueAsString(requestDTO).getBytes());
 
-                when(productService.updateProduct(eq(1L), any(ProductRequestDTO.class))).thenReturn(responseDTO);
+                when(productService.updateProduct(eq("123"), any(ProductRequestDTO.class))).thenReturn(responseDTO);
 
                 mockMvc.perform(multipart("/products/{id}", 1L)
                                 .file(file)
@@ -148,24 +148,24 @@ class ProductControllerTest {
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.category").value("Gaming"));
 
-                verify(productService).updateProduct(eq(1L), any(ProductRequestDTO.class));
+                verify(productService).updateProduct(eq("123"), any(ProductRequestDTO.class));
         }
 
         @Test
         @DisplayName("✅ Should delete a product")
         void testDeleteProduct() throws Exception {
-                doNothing().when(productService).deleteProduct(1L);
+                doNothing().when(productService).deleteProduct("123");
 
                 mockMvc.perform(delete("/products/{id}", 1L))
                                 .andExpect(status().isNoContent());
 
-                verify(productService).deleteProduct(1L);
+                verify(productService).deleteProduct("123");
         }
 
         @Test
         @DisplayName("✅ Should check stock successfully")
         void testCheckStock() throws Exception {
-                doNothing().when(productService).checkAndUpdateStock("ORDER123", 1L, 2);
+                doNothing().when(productService).checkAndUpdateStock("ORDER123", "123", 2);
 
                 mockMvc.perform(post("/products/check-stock")
                                 .param("orderId", "ORDER123")
@@ -174,6 +174,6 @@ class ProductControllerTest {
                                 .andExpect(status().isOk())
                                 .andExpect(content().string("Stock check request received."));
 
-                verify(productService).checkAndUpdateStock("ORDER123", 1L, 2);
+                verify(productService).checkAndUpdateStock("ORDER123", "123", 2);
         }
 }

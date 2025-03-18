@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.e_commerce.user_service.config.KafkaProducerService;
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
 import com.e_commerce.user_service.dto.CurrentUserDTO;
 import com.e_commerce.user_service.dto.ForgotPasswordDTO;
@@ -29,6 +28,7 @@ import com.e_commerce.user_service.exception.UserNotFoundException;
 import com.e_commerce.user_service.model.User;
 import com.e_commerce.user_service.repository.UserRepository;
 import com.e_commerce.user_service.security.JwtTokenProvider;
+import com.e_commerce.user_service.service.kafka.KafkaProducerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -266,7 +266,7 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
 
-        UserLoginEventDTO event = new UserLoginEventDTO(user.getId(), user.getUsername(), user.getEmail(), token,
+        UserLoginEventDTO event = new UserLoginEventDTO(user.getId(), user.getUsername(), user.getEmail(),
                 "USER_LOGIN");
 
         try {

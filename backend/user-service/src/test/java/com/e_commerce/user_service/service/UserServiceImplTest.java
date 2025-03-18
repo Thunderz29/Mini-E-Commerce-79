@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.e_commerce.user_service.config.KafkaProducerService;
 import com.e_commerce.user_service.dto.CreateUserRequestDTO;
 import com.e_commerce.user_service.dto.LoginRequestDTO;
 import com.e_commerce.user_service.dto.LoginResponseDTO;
@@ -26,6 +25,7 @@ import com.e_commerce.user_service.exception.UserNotFoundException;
 import com.e_commerce.user_service.model.User;
 import com.e_commerce.user_service.repository.UserRepository;
 import com.e_commerce.user_service.security.JwtTokenProvider;
+import com.e_commerce.user_service.service.kafka.KafkaProducerService;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {

@@ -12,15 +12,15 @@ import com.e_commerce.user_service.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
-    // Native Query untuk mencari User berdasarkan email
-    @Query(value = "SELECT * FROM users WHERE email = :email LIMIT 1", nativeQuery = true)
+    // ✅ JPQL Query untuk mencari User berdasarkan email
+    @Query("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> findByEmail(@Param("email") String email);
 
-    // Native Query untuk mengecek apakah username sudah ada
-    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM users WHERE username = :username", nativeQuery = true)
+    // ✅ JPQL Query untuk mengecek apakah username sudah ada
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.username = :username")
     boolean existsByUsername(@Param("username") String username);
 
-    // Native Query untuk mengecek apakah email sudah ada
-    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM users WHERE email = :email", nativeQuery = true)
+    // ✅ JPQL Query untuk mengecek apakah email sudah ada
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email")
     boolean existsByEmail(@Param("email") String email);
 }

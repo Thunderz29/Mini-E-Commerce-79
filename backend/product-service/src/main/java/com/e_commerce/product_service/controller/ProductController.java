@@ -53,7 +53,7 @@ public class ProductController {
 
     // GET /products/{id} - Mendapatkan detail produk berdasarkan ID
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") Long productId) {
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") String productId) {
         ProductResponseDTO productResponse = productService.getProductById(productId);
         return ResponseEntity.ok(productResponse);
     }
@@ -73,7 +73,7 @@ public class ProductController {
     // PUT /products/{id} - Mengupdate data produk
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProduct(
-            @PathVariable("id") Long productId,
+            @PathVariable("id") String productId,
             @RequestParam("product") String productJson,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
@@ -91,7 +91,7 @@ public class ProductController {
 
     // DELETE /products/{id} - Menghapus produk
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long productId) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") String productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
@@ -99,7 +99,7 @@ public class ProductController {
     @PostMapping("/check-stock")
     public ResponseEntity<String> checkStock(
             @RequestParam String orderId,
-            @RequestParam Long productId,
+            @RequestParam String productId,
             @RequestParam int quantity) {
 
         productService.checkAndUpdateStock(orderId, productId, quantity);

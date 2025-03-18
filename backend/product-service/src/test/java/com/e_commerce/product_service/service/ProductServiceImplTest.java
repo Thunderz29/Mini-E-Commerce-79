@@ -15,13 +15,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.e_commerce.product_service.config.KafkaProducerService;
 import com.e_commerce.product_service.dto.ProductRequestDTO;
 import com.e_commerce.product_service.dto.ProductResponseDTO;
 import com.e_commerce.product_service.dto.StockUpdateDTO;
 import com.e_commerce.product_service.exception.ResourceNotFoundException;
 import com.e_commerce.product_service.model.Product;
 import com.e_commerce.product_service.repository.ProductRepository;
+import com.e_commerce.product_service.service.kafka.KafkaProducerService;
+import com.e_commerce.product_service.service.minio.MinioService;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -44,7 +45,7 @@ class ProductServiceImplTest {
     @BeforeEach
     void setUp() {
         product = new Product();
-        product.setProductId(1L);
+        product.setProductId("123");
         product.setName("Test Product");
         product.setDescription("Product Description");
         product.setPrice(BigDecimal.valueOf(100));
@@ -95,9 +96,9 @@ class ProductServiceImplTest {
 
     @Test
     void testGetProductById_Success() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById("123")).thenReturn(Optional.of(product));
 
-        ProductResponseDTO response = productService.getProductById(1L);
+        ProductResponseDTO response = productService.getProductById("123");
 
         assertNotNull(response);
         assertEquals(product.getName(), response.getName());
@@ -106,9 +107,9 @@ class ProductServiceImplTest {
 
     @Test
     void testGetProductById_NotFound() {
-        when(productRepository.findById(99L)).thenReturn(Optional.empty());
+        when(productRepository.findById("123")).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> productService.getProductById(99L));
+        assertThrows(ResourceNotFoundException.class, () -> productService.getProductById("123"));
     }
 
     // @Test
@@ -127,10 +128,10 @@ class ProductServiceImplTest {
 
     @Test
     void testUpdateProduct_Success() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById("123")).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        ProductResponseDTO response = productService.updateProduct(1L, productRequestDTO);
+        ProductResponseDTO response = productService.updateProduct("123", productRequestDTO);
 
         assertNotNull(response);
         assertEquals(productRequestDTO.getName(), response.getName());
@@ -141,32 +142,32 @@ class ProductServiceImplTest {
 
     @Test
     void testUpdateProduct_NotFound() {
-        when(productRepository.findById(99L)).thenReturn(Optional.empty());
+        when(productRepository.findById("123")).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(99L, productRequestDTO));
+        assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct("123", productRequestDTO));
     }
 
     @Test
     void testDeleteProduct_Success() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById("123")).thenReturn(Optional.of(product));
 
-        productService.deleteProduct(1L);
+        productService.deleteProduct("123");
 
         verify(productRepository, times(1)).delete(product);
     }
 
     @Test
     void testDeleteProduct_NotFound() {
-        when(productRepository.findById(99L)).thenReturn(Optional.empty());
+        when(productRepository.findById("123")).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> productService.deleteProduct(99L));
+        assertThrows(ResourceNotFoundException.class, () -> productService.deleteProduct("123"));
     }
 
     @Test
     void testCheckAndUpdateStock_Success() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById("123")).thenReturn(Optional.of(product));
 
-        productService.checkAndUpdateStock("order123", 1L, 5);
+        productService.checkAndUpdateStock("order123", "123", 5);
 
         assertEquals(5, product.getQuantity());
         verify(productRepository, times(1)).save(product);
@@ -175,9 +176,9 @@ class ProductServiceImplTest {
 
     @Test
     void testCheckAndUpdateStock_InsufficientStock() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById("123")).thenReturn(Optional.of(product));
 
-        productService.checkAndUpdateStock("order123", 1L, 15);
+        productService.checkAndUpdateStock("order123", "123", 15);
 
         assertEquals(10, product.getQuantity()); // Stock tidak berkurang
         verify(productRepository, never()).save(any(Product.class));
@@ -186,8 +187,8 @@ class ProductServiceImplTest {
 
     @Test
     void testCheckAndUpdateStock_ProductNotFound() {
-        when(productRepository.findById(99L)).thenReturn(Optional.empty());
+        when(productRepository.findById("123")).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> productService.checkAndUpdateStock("order123", 99L, 5));
+        assertThrows(ResourceNotFoundException.class, () -> productService.checkAndUpdateStock("order123", "123", 5));
     }
 }
