@@ -1,29 +1,28 @@
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm text-center">
-      <img [src]="user.avatar" alt="Avatar" class="w-24 h-24 rounded-full mx-auto border-4 border-gray-200" />
-      
-      <div class="mt-4">
-        <h2 class="text-xl font-semibold text-gray-700">
-          {{ user.username }}
-        </h2>
-        <p class="text-gray-500">{{ user.email }}</p>
-        <p class="text-gray-500">{{ user.phone }}</p>
-      </div>
-  
-      <button
-        (click)="toggleEdit()"
-        class="mt-4 px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition"
-      >
-        {{ isEditing ? 'Simpan' : 'Edit Username' }}
-      </button>
-  
-      <div *ngIf="isEditing" class="mt-3">
-        <input
-          type="text"
-          [(ngModel)]="newUsername"
-          class="w-full p-2 border border-gray-300 rounded-lg text-center"
-        />
-      </div>
+<app-navbar></app-navbar>
+
+<div class="container">
+  <div class="profile-card">
+    <img [src]="user.avatar" alt="Avatar" class="avatar" />
+    
+    <div class="user-info">
+      <h2>{{ user.username }}</h2>
+      <p>{{ user.email }}</p>
+      <p>{{ user.phone }}</p>
+    </div>
+
+    <button (click)="toggleEdit()" class="edit-btn">
+      {{ isEditing ? 'Batalkan' : 'Edit Profil' }}
+    </button>
+
+    <!-- Form Edit -->
+    <div *ngIf="isEditing" class="edit-form">
+      <label>Username</label>
+      <input type="text" [(ngModel)]="editUser.username" />
+S
+      <label>No Telepon</label>
+      <input type="text" [(ngModel)]="editUser.phone" />
+
+      <button (click)="saveChanges()" class="save-btn">Simpan Perubahan</button>
     </div>
   </div>
-  
+</div>

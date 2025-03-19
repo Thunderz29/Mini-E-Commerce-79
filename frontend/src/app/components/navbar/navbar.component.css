@@ -1,12 +1,13 @@
 /* Navbar */
 .navbar {
-  position: fixed;
-  width: 98%; /* Lebarnya tidak full agar lebih rapi */
+  position: fixed; 
+  width: 97.5%; 
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #0056b3; /* Warna biru elegan */
+  padding: 15px 20px;
+  background-color: #0056b3;
   color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

@@ -1,0 +1,25 @@
+<app-navbar></app-navbar> <!-- Tambahkan navbar -->
+
+<div class="order-status-container">
+  <h2>Status Pesanan</h2>
+
+  <div *ngIf="orders.length > 0; else emptyOrder">
+    <div class="order-item" *ngFor="let order of orders">
+      <img [src]="order.image" alt="Product Image" class="order-image">
+      
+      <div class="order-details">
+        <p class="order-id"><strong>ID Pesanan:</strong> {{ order.id }}</p>
+        <p class="order-name"><strong>Nama:</strong> {{ order.name }}</p>
+        <p class="order-qty"><strong>Qty:</strong> {{ order.qty }}</p>
+        <p class="order-price"><strong>Total:</strong> Rp {{ order.price | number }}</p>
+        <p class="order-status" [ngClass]="getStatusClass(order.status)">
+          <strong>Status:</strong> {{ order.status }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyOrder>
+    <p class="empty-message">Belum ada pesanan yang diproses.</p>
+  </ng-template>
+</div>

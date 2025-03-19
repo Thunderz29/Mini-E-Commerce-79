@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   standalone: true,
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent],
 })
 export class UserProfileComponent {
   user = {
@@ -18,12 +19,20 @@ export class UserProfileComponent {
   };
 
   isEditing = false;
-  newUsername = this.user.username;
+  editUser = { username: '', phone: '' };
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
-    if (!this.isEditing) {
-      this.user.username = this.newUsername;
+    if (this.isEditing) {
+      // Menyalin data user ke form edit
+      this.editUser = { username: this.user.username, phone: this.user.phone };
     }
+  }
+
+  saveChanges() {
+    // Menyimpan perubahan
+    this.user.username = this.editUser.username;
+    this.user.phone = this.editUser.phone;
+    this.isEditing = false;
   }
 }

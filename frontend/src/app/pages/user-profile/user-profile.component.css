@@ -1,0 +1,99 @@
+/* Container utama */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f3f4f6;
+  }
+  
+  /* Kartu profil */
+  .profile-card {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  /* Avatar */
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 4px solid #e5e7eb;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  /* Info pengguna */
+  .user-info h2 {
+    font-size: 20px;
+    color: #374151;
+    margin: 10px 0;
+  }
+  
+  .user-info p {
+    color: #6b7280;
+    font-size: 14px;
+    margin: 4px 0;
+  }
+  
+  /* Tombol edit */
+  .edit-btn {
+    margin-top: 16px;
+    padding: 10px 16px;
+    background-color: #3b82f6;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .edit-btn:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Form edit */
+  .edit-form {
+    margin-top: 16px;
+    text-align: left;
+  }
+  
+  .edit-form label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #374151;
+    display: block;
+    margin: 6px 0 2px;
+  }
+  
+  .edit-form input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+  }
+  
+  /* Tombol simpan */
+  .save-btn {
+    margin-top: 12px;
+    padding: 10px 16px;
+    background-color: #10b981;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+  }
+  
+  .save-btn:hover {
+    background-color: #059669;
+  }
+  

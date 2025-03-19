@@ -136,7 +136,7 @@ class UserControllerTest {
         @DisplayName("✅ Should update user successfully")
         void testUpdateUser() throws Exception {
                 UpdateUserRequestDTO requestDTO = new UpdateUserRequestDTO(200, "John Updated",
-                                "john.updated@example.com", "081283664");
+                                "081283664");
 
                 UserResponseDTO responseDTO = new UserResponseDTO(200, "1", "John Updated", "john.updated@example.com",
                                 "081283664",

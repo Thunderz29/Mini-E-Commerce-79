@@ -1,1 +1,36 @@
-<p>order-history works!</p>
+<!-- Navbar -->
+<app-navbar></app-navbar>
+
+<div class="order-history-container">
+  <h2>Riwayat Pesanan</h2>
+
+  <div *ngIf="orders.length > 0; else emptyState">
+    <div *ngFor="let order of orders" class="order-item">
+      <div class="order-info">
+        <p><strong>ID Transaksi:</strong> {{ order.id }}</p>
+        <p><strong>Tanggal Selesai:</strong> {{ order.completedAt }}</p>
+      </div>
+
+      <div class="order-products">
+        <div *ngFor="let product of order.products" class="product-item">
+          <img [src]="product.image" alt="Product Image" class="product-image">
+          <div class="product-details">
+            <p class="product-name">{{ product.name }}</p>
+            <p class="product-price">Rp {{ product.price | number }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Harga Transaksi -->
+      <div class="order-total">
+        <p><strong>Total Barang:</strong> {{ order.totalItems }}</p>
+        <p><strong>Total Harga:</strong> Rp {{ order.totalPrice | number }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jika tidak ada pesanan -->
+  <ng-template #emptyState>
+    <p class="empty-message">Belum ada riwayat pesanan.</p>
+  </ng-template>
+</div>

@@ -198,16 +198,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
         try {
-            if (updateUserRequestDTO.getEmail() != null) {
-                user.setEmail(updateUserRequestDTO.getEmail());
-            }
 
             if (updateUserRequestDTO.getUsername() != null) {
                 user.setUsername(updateUserRequestDTO.getUsername());
             }
 
             if (updateUserRequestDTO.getPhone() != null) {
-                user.setPhone(updateUserRequestDTO.getPhone()); // Fixed mistake (was setUsername)
+                user.setPhone(updateUserRequestDTO.getPhone());
             }
 
             userRepository.save(user);

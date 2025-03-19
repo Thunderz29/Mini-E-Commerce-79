@@ -1,0 +1,114 @@
+  /* Kontainer */
+  .payment-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding-top: 70px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Produk */
+  .product-list {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .product-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+  .product-details p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .product-name {
+    font-weight: bold;
+  }
+  
+  .product-price {
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  /* Total Harga */
+  .total-price {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    color: #d9534f;
+  }
+  
+  /* Metode Pembayaran */
+  .payment-method label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  /* Alamat */
+  .address-input {
+    width: 100%;
+    padding: 10px; 
+    margin: auto ; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; 
+  }  
+  
+  /* Syarat & Ketentuan */
+  .terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .terms input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  /* Tombol */
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+    background: #28a745;
+    color: white;
+  }
+  
+  .btn:disabled {
+    background: gray;
+    cursor: not-allowed;
+  }
+  
+  /* Responsif */
+  @media (max-width: 600px) {
+    .payment-container {
+      width: 90%;
+    }
+  }
+  

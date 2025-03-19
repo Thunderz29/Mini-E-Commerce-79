@@ -1,0 +1,41 @@
+<!-- Navbar -->
+<app-navbar></app-navbar>
+
+<div class="payment-container">
+  <h3>Ringkasan Pesanan</h3>
+  
+  <!-- Daftar Produk -->
+  <div class="product-list">
+    <div class="product-item" *ngFor="let item of cart">
+      <img [src]="item.image" alt="Product Image" class="product-image">
+      <div class="product-details">
+        <p class="product-name">{{ item.name }}</p>
+        <p>Qty: {{ item.qty }}</p>
+        <p class="product-price">Rp {{ item.price * item.qty | number:'1.0-0' }}</p>
+      </div>
+    </div>
+    <div class="total-price">
+      <p>Total Harga: <span>Rp {{ formattedTotalPrice }}</span></p>
+    </div>
+  </div>
+
+  <!-- Metode Pembayaran -->
+  <h3>Metode Pembayaran</h3>
+  <div class="payment-method">
+    <label><input type="radio" name="payment" value="transfer" [(ngModel)]="paymentMethod"> Transfer Bank</label>
+    <label><input type="radio" name="payment" value="cod" [(ngModel)]="paymentMethod"> Bayar di Tempat (COD)</label>
+  </div>
+
+  <!-- Alamat Pengiriman -->
+  <h3>Alamat Pengiriman</h3>
+  <textarea class="address-input" placeholder="Masukkan alamat pengiriman" [(ngModel)]="address"></textarea>
+
+  <!-- Syarat & Ketentuan -->
+  <div class="terms">
+    <input type="checkbox" id="agree" [(ngModel)]="isAgreed">
+    <label for="agree">Saya menyetujui syarat dan ketentuan</label>
+  </div>
+
+  <!-- Tombol Pembayaran -->
+  <button (click)="confirmOrder()" class="btn" [disabled]="!canConfirm">Konfirmasi</button>
+</div>

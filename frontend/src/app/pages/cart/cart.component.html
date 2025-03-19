@@ -1,1 +1,36 @@
-<p>cart works!</p>
+<app-navbar></app-navbar>
+
+<div class="cart-container">
+  <h2>Keranjang Belanja</h2>
+
+  <div class="cart-items">
+    <div class="cart-item" *ngFor="let item of cart; let i = index">
+      <input type="checkbox" [(ngModel)]="item.checked" (change)="calculateTotal()" />
+
+      <img [src]="item.image" alt="{{ item.name }}" class="item-image" />
+
+      <div class="item-details">
+        <h3>{{ item.name }}</h3>
+        <p>Harga: Rp {{ item.price | number }}</p>
+        
+        <div class="qty-controls">
+          <button (click)="decreaseQty(i)">-</button>
+          <span>{{ item.qty }}</span>
+          <button (click)="increaseQty(i)">+</button>
+        </div>
+
+        <p>Total: Rp {{ (item.qty * item.price) | number }}</p>
+      </div>
+      
+      <button class="remove-btn" (click)="removeItem(i)">Hapus</button>
+    </div>
+  </div>
+
+    <div class="cart-summary">
+      <div class="cart-summary-item">
+          <span>Total Harga Barang Dipilih:</span>
+          <span>Rp {{ selectedTotal | number }}</span>
+      </div>
+      <button class="checkout-btn" [disabled]="selectedTotal === 0" (click)="checkout()">Checkout</button>
+  </div>
+</div>
