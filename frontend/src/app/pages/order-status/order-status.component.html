@@ -1,4 +1,4 @@
-<app-navbar></app-navbar> <!-- Tambahkan navbar -->
+<app-navbar></app-navbar>
 
 <div class="order-status-container">
   <h2>Status Pesanan</h2>
@@ -9,13 +9,13 @@
       
       <div class="order-details">
         <p class="order-id"><strong>ID Pesanan:</strong> {{ order.id }}</p>
-        <p class="order-name"><strong>Nama:</strong> {{ order.name }}</p>
-        <p class="order-qty"><strong>Qty:</strong> {{ order.qty }}</p>
-        <p class="order-price"><strong>Total:</strong> Rp {{ order.price | number }}</p>
-        <p class="order-status" [ngClass]="getStatusClass(order.status)">
-          <strong>Status:</strong> {{ order.status }}
-        </p>
+        <p class="order-name"><strong>Nama Produk:</strong> {{ order.name }}</p>
+        <p class="order-qty"><strong>Jumlah:</strong> {{ order.qty }}</p>
+        <p class="order-price"><strong>Total Harga:</strong> Rp {{ order.price | number }}</p>
       </div>
+      <span class="order-status" [ngClass]="getStatusClass(order.status)">
+        {{ order.status }}
+      </span>
     </div>
   </div>
 

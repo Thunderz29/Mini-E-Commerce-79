@@ -4,28 +4,28 @@
     <a href="/home">ShopLogo</a>
   </div>
 
-<!-- Search Bar -->
-<div class="search-bar">
-  <input 
-    type="text" 
-    placeholder="Search for products..." 
-    [(ngModel)]="searchQuery"
-    (keyup)="onSearch()"
-  >
-</div>
-
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input 
+      type="text" 
+      placeholder="Search for products..." 
+      [(ngModel)]="searchQuery"
+      (keyup)="onSearch()"
+    >
+  </div>
 
   <!-- Icons & User Menu -->
   <div class="icons">
     <!-- Keranjang Belanja -->
-    <a href="/cart" class="cart">
-      <img src="images/cart.png" alt="Cart" class="cart-icon">
+    <a [routerLink]="['/cart']" class="cart">
+      <img src="/images/cart.png" alt="Cart" class="cart-icon">
       <span class="badge">{{ cartItemCount }}</span>
     </a>
 
-    <!-- Order History -->
-    <a href="#" class="order-history">
-      <i class="fas fa-box"></i>
+    <!-- Order Status -->
+    <a [routerLink]="['/order-status']" class="order-status">
+      <img src="/images/order.png" alt="Order" class="order-icon">
+      <span class="badge">{{ orderItemCount }}</span>
     </a>
 
     <!-- User Profile -->
@@ -33,8 +33,8 @@
       <i class="fas fa-user"></i>
       <span class="username">{{ userName }}</span>
       <ul class="user-dropdown" [class.open]="isUserMenuOpen">
-        <li><a href="/profile">Profile</a></li>
-        <li><a href="/order">Order History</a></li>
+        <li><a [routerLink]="['/profile']">Profile</a></li>
+        <li><a [routerLink]="['/order-history']">Order History</a></li>
         <li><a href="#" (click)="logout($event)">Logout</a></li>
       </ul>
     </div>
@@ -44,6 +44,4 @@
   <button class="menu-btn" (click)="toggleMenu()">
     <i class="fas fa-bars"></i>
   </button>
-
-  <!-- Mobile Menu -->
 </nav>

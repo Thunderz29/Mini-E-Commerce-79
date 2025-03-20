@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -14,6 +14,7 @@ export class NavbarComponent {
   isMenuOpen = false;
   isUserMenuOpen = false;
   cartItemCount = 3;
+  orderItemCount = 2;
   userName = 'User'; 
   searchQuery = ''; 
 
@@ -35,8 +36,27 @@ export class NavbarComponent {
     this.router.navigate(['/login']);
   }
   
-
   onSearch() {
     this.searchEvent.emit(this.searchQuery);
+  }
+
+  navigateToCart(event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/cart']);
+  }
+
+  navigateToOrderStatus(event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/Order-status']);
+  }
+
+  navigateToProfile(event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/profile']);
+  }
+
+  navigateToOrder(event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/order-history']);
   }
 }

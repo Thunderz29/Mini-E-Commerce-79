@@ -1,7 +1,9 @@
 /* Navbar */
 .navbar {
-  position: fixed; 
-  width: 97.5%; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 97.5%;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
@@ -12,7 +14,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-
 /* Logo */
 .logo a {
   font-size: 24px;
@@ -22,12 +23,23 @@
 }
 
 /* Search Bar */
+.search-bar {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
 .search-bar input {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  width: 400px;
-  max-width: 600px;
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.3s ease-in-out;
+}
+
+.search-bar input:focus {
+  outline: 2px solid #fff;
 }
 
 /* Icons */
@@ -81,6 +93,7 @@
   padding: 10px 0;
   width: 160px;
   font-size: 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .user-dropdown li {
@@ -92,7 +105,7 @@
 
 .user-dropdown li a {
   color: #000;
-  text-decoration: none; 
+  text-decoration: none;
   display: block;
 }
 
@@ -100,12 +113,12 @@
   background: #e9ecef;
 }
 
-
+/* Tampilkan dropdown ketika aktif */
 .user-dropdown.open {
   display: block;
 }
 
-/* Mobile Menu */
+/* Mobile Menu Button */
 .menu-btn {
   background: none;
   border: none;
@@ -115,6 +128,7 @@
   cursor: pointer;
 }
 
+/* Mobile Menu */
 .mobile-menu {
   display: none;
   list-style: none;
@@ -131,7 +145,14 @@
   display: flex;
 }
 
-/* Responsive */
+/* 🔹 Responsiveness */
+@media (max-width: 1024px) {
+  .search-bar input {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-links {
     display: none;
@@ -139,5 +160,21 @@
 
   .menu-btn {
     display: block;
+  }
+
+  .search-bar {
+    width: 80%;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+
+  .icons {
+    gap: 10px;
+  }
+
+  .user-dropdown {
+    right: -20px;
   }
 }

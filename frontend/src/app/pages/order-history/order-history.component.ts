@@ -19,9 +19,9 @@ export class OrderHistoryComponent {
       totalPrice: 15925000,
       completedAt: '18 Maret 2025',  
       products: [
-        { name: 'Laptop Gaming', price: 15000000, image: 'assets/laptop.jpg' },
-        { name: 'Mouse Wireless', price: 250000, image: 'assets/mouse.jpg' },
-        { name: 'Headset Gaming', price: 750000, image: 'assets/headset.jpg' }
+        { name: 'Laptop Gaming', price: 15000000, image: 'images/product.jpg' },
+        { name: 'Mouse Wireless', price: 250000, image: 'images/product.jpg' },
+        { name: 'Headset Gaming', price: 750000, image: 'images/product.jpg' }
       ]
     },
     {
@@ -30,8 +30,8 @@ export class OrderHistoryComponent {
       totalPrice: 3700000,
       completedAt: '15 Maret 2025',
       products: [
-        { name: 'Keyboard Mechanical', price: 1200000, image: 'assets/keyboard.jpg' },
-        { name: 'Monitor 24 inch', price: 2500000, image: 'assets/monitor.jpg' }
+        { name: 'Keyboard Mechanical', price: 1200000, image: 'images/product.jpg' },
+        { name: 'Monitor 24 inch', price: 2500000, image: 'images/product.jpg' }
       ]
     }
   ];

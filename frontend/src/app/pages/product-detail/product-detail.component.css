@@ -1,24 +1,29 @@
 /* Container utama */
+.product-detail-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  padding-top: 70px;
+}
+
+/* Product Detail */
 .product-detail {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 30px;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: auto;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Gambar Produk */
 .product-image {
-  width: 250px;
+  width: 280px;
   height: auto;
-  border-radius: 10px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Informasi Produk */
@@ -26,15 +31,37 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* Nama Produk */
 h2 {
   margin: 0;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
   color: #333;
+}
+
+/* Kategori */
+.category {
+  font-size: 16px;
+  color: #777;
+}
+
+.category span {
+  font-weight: bold;
+  color: #0056b3;
+}
+
+/* Stok */
+.stock {
+  font-size: 16px;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.low-stock {
+  color: #d9534f;
 }
 
 /* Deskripsi Produk */
@@ -46,15 +73,15 @@ h2 {
 
 /* Harga */
 .price {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
   color: #e44d26;
 }
 
 /* Tombol Add to Cart */
 .add-to-cart {
-  padding: 12px 18px;
-  background-color: #00b14f; /* Warna khas Tokopedia */
+  padding: 14px;
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 8px;
@@ -68,23 +95,23 @@ h2 {
 }
 
 .add-to-cart:hover {
-  background-color: #008d3b;
+  background-color: #218838;
 }
 
-/* Responsif untuk layar kecil */
+/* Responsif */
 @media (max-width: 768px) {
   .product-detail {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .product-image {
-      width: 100%;
-      max-width: 300px;
+    width: 100%;
+    max-width: 320px;
   }
 
   .add-to-cart {
-      width: 100%;
+    width: 100%;
   }
 }

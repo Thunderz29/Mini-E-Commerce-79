@@ -7,13 +7,13 @@ import { NavbarComponent } from '../../components/navbar/navbar.component';
   standalone: true,
   templateUrl: './order-status.component.html',
   styleUrls: ['./order-status.component.css'],
-  imports: [CommonModule, NavbarComponent] // Import yang dibutuhkan
+  imports: [CommonModule, NavbarComponent]
 })
 export class OrderStatusComponent {
   orders = [
     {
       id: 'INV-20240319-001',
-      image: 'assets/product1.jpg',
+      image: '/images/product.jpg',
       name: 'Sneakers Sport',
       qty: 2,
       price: 250000,
@@ -21,11 +21,19 @@ export class OrderStatusComponent {
     },
     {
       id: 'INV-20240319-002',
-      image: 'assets/product2.jpg',
+      image: '/images/product.jpg',
       name: 'Jacket Hoodie',
       qty: 1,
       price: 350000,
       status: 'Dikirim'
+    },
+    {
+      id: 'INV-20240319-003',
+      image: '/images/product.jpg',
+      name: 'Smartwatch',
+      qty: 1,
+      price: 1500000,
+      status: 'Selesai'
     }
   ];
 

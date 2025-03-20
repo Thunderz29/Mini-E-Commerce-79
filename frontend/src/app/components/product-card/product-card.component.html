@@ -1,7 +1,6 @@
-<div class="product-card">
-    <img [src]="product.image" alt="{{ product.name }}">
-    <h3>{{ product.name }}</h3>
-    <p class="price">$ {{ product.price | number }}</p>
-    <button>Add to cart</button>
-  </div>
-  
+<a [routerLink]="['/product']" class="product-card">
+  <img [src]="product.image" alt="{{ product.name }}">
+  <h3>{{ product.name }}</h3>
+  <p class="price">$ {{ product.price | number }}</p>
+  <button>Add to cart</button>
+</a>
